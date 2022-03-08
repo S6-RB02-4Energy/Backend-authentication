@@ -1,6 +1,15 @@
 server:
-    port: 8081
+    port: 8082
 spring:
+  mvc:
+    converters:
+      preferred-json-mapper: gson
+  application:
+    name: AuthenticationAPI
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
   datasource:
     url: "jdbc:mysql://localhost:3306/test"
     username: "root"
