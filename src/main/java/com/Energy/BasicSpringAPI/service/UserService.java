@@ -1,9 +1,11 @@
-package com.Energy.BasicSpringAPI.service;
+package com.Energy.BasicSpringAPI.service.services;
 
 import com.Energy.BasicSpringAPI.DTO.UserDto;
+import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -11,13 +13,16 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+@Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-
-//    @Override
-//    public UserDto save(UserDto user){
+@Override
+public UserEntity save(UserEntity userEntity){
+    return userRepository.save(UserEntity);
+}
+//    public UserEntity save(UserEntity user){
 //        if (user != null) {
 //            return userRepository.save(user);
 //        }else throw new NullPointerException();
