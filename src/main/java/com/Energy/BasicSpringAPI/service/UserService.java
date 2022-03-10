@@ -1,6 +1,9 @@
-package com.Energy.BasicSpringAPI.controller;
+package com.Energy.BasicSpringAPI.service;
 
-import com.Energy.BasicSpringAPI.models.User;
+import com.Energy.BasicSpringAPI.DTO.UserDto;
+import com.Energy.BasicSpringAPI.enumerators.Roles;
+import com.Energy.BasicSpringAPI.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -8,15 +11,25 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-public class UserController {
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
 
-    public User getUser(String email, String password) throws SQLException, URISyntaxException, NoSuchAlgorithmException {
+
+//    @Override
+//    public UserDto save(UserDto user){
+//        if (user != null) {
+//            return userRepository.save(user);
+//        }else throw new NullPointerException();
+//    }
+
+    public UserDto getUser(String email, String password) throws SQLException, URISyntaxException, NoSuchAlgorithmException {
 
         String encryptedPassword = doHashing(password);
 
         String passwordSaved = "52cbd20b20d8a47049a376309a2d73b7a6af2334c62dd05ca221fc2daf9ca525";
         if (encryptedPassword.equals(passwordSaved)){
-            return new User(1, email, encryptedPassword);
+            return new UserDto("test", email, encryptedPassword, Roles.ADMIN);
         }
         else {
             return null;

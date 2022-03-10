@@ -1,8 +1,7 @@
-package com.Energy.BasicSpringAPI.resources;
+package com.Energy.BasicSpringAPI.controller;
 
-import com.Energy.BasicSpringAPI.controller.UserController;
-
-import com.Energy.BasicSpringAPI.models.User;
+import com.Energy.BasicSpringAPI.DTO.UserDto;
+import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +18,15 @@ import java.sql.SQLException;
 import java.util.StringTokenizer;
 
 @RestController
-@RequestMapping("authentication")
-public class authentication {
+@RequestMapping("auth")
+public class AuthController {
+//    @Autowired
+//    private UserService userService;
 
     @PermitAll
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity authenticate(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
-        UserController userController = new UserController();
+        UserService userService = new UserService();
         System.out.println(body);
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
         final String email = tokenizer.nextToken();
@@ -33,13 +34,24 @@ public class authentication {
         System.out.println(email);
         System.out.println(password);
 
-        User user = userController.getUser(email, password);
-        if (user==null){
+        UserDto userDto = userService.getUser(email, password);
+        if (userDto ==null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         else {
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
 
+        }
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
+    public ResponseEntity<UserDto> CreateUser(HttpServletResponse response, @RequestBody UserDto user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+        try {
+//            userService.save(user);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
