@@ -1,13 +1,12 @@
 package com.Energy.BasicSpringAPI.controller;
 
 import com.Energy.BasicSpringAPI.DTO.UserDto;
+import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletResponse;
@@ -18,10 +17,11 @@ import java.sql.SQLException;
 import java.util.StringTokenizer;
 
 @RestController
+//@CrossOrigin
 @RequestMapping("auth")
 public class AuthController {
-//    @Autowired
-//    private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @PermitAll
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -46,10 +46,9 @@ public class AuthController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
-    public ResponseEntity<UserDto> CreateUser(HttpServletResponse response, @RequestBody UserDto user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    public ResponseEntity<UserEntity> CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         try {
-//            userService.save(user);
-            return new ResponseEntity<>(user, HttpStatus.CREATED);
+            return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,4 +1,4 @@
-package com.Energy.BasicSpringAPI.service.services;
+package com.Energy.BasicSpringAPI.service;
 
 import com.Energy.BasicSpringAPI.DTO.UserDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
@@ -12,21 +12,58 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserInterface{
     @Autowired
     private UserRepository userRepository;
 
-@Override
-public UserEntity save(UserEntity userEntity){
-    return userRepository.save(UserEntity);
-}
-//    public UserEntity save(UserEntity user){
-//        if (user != null) {
-//            return userRepository.save(user);
-//        }else throw new NullPointerException();
-//    }
+    @Override
+    public List<UserEntity> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public List<UserEntity> findAllByRole(Roles role) {
+        return userRepository.findAllByRole(role);
+    }
+
+    @Override
+    public UserEntity save(UserEntity userEntity){
+    return userRepository.save(userEntity);
+    }
+
+    @Override
+    public Optional<UserEntity> findById(long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
+    @Override
+    public Optional<UserEntity> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public Boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 
     public UserDto getUser(String email, String password) throws SQLException, URISyntaxException, NoSuchAlgorithmException {
 
