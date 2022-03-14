@@ -46,8 +46,28 @@ public class AuthController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
-    public ResponseEntity<UserEntity> CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    public ResponseEntity CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         try {
+            if (userService.existsByUsername(user.getUsername())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Username is already taken!");
+            }
+
+            if (userService.existsByEmail(user.getEmail())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Email is already in use!");
+            }
+
+            if(user.role == null){
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Role is not valid!");
+            }
+            //TODO hash the password
+            //user.setPassword(user.password);
+            userService.save(user);
             return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
