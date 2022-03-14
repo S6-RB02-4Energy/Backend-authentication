@@ -6,10 +6,15 @@ import com.Energy.BasicSpringAPI.enumerators.Roles;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Interface for the user service
+ *
+ * @class UserInterface
+ */
 public interface UserInterface {
         List<UserEntity> findAll();
         List<UserEntity> findAllByRole(Roles role);
-    UserEntity save(UserEntity user);
+        UserEntity save(UserEntity user);
         Optional<UserEntity> findById(long id);
         void deleteById(long id);
         void deleteAll();

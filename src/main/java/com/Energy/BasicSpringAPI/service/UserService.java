@@ -15,6 +15,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Handles Users CRUD Operations and checks for username and email duplication
+ *
+ * @class UserService
+ */
 @Service
 public class UserService implements UserInterface{
     @Autowired

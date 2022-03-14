@@ -16,13 +16,25 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 
+
+/**
+ * Handles Authentication
+ *
+ * @class AuthController
+ */
 @RestController
-//@CrossOrigin
 @RequestMapping("auth")
 public class AuthController {
     @Autowired
     private UserService userService;
 
+
+    /**
+     * Authenticating user
+     *
+     * @returns {ResponseEntity}
+     * @memberof AuthController
+     */
     @PermitAll
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity authenticate(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
@@ -44,22 +56,30 @@ public class AuthController {
         }
     }
 
+    /**
+     * Registering a new User
+     *
+     * @returns {ResponseEntity} user/Bad Request with error message
+     * @memberof AuthController
+     */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
     public ResponseEntity CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         try {
+            //Checking if username is already in use
             if (userService.existsByUsername(user.getUsername())) {
                 return ResponseEntity
                         .badRequest()
                         .body("Error: Username is already taken!");
             }
-
+            //Check if there is already user with that email
             if (userService.existsByEmail(user.getEmail())) {
                 return ResponseEntity
                         .badRequest()
                         .body("Error: Email is already in use!");
             }
 
+            //Checking if role is null
             if(user.role == null){
                 return ResponseEntity
                         .badRequest()
@@ -67,9 +87,12 @@ public class AuthController {
             }
             //TODO hash the password
             //user.setPassword(user.password);
+            //After all the checks the user is saved in the database
             userService.save(user);
+            //returning the saved user and HTTP status 201 Created
             return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
         } catch (Exception e) {
+            //If there is an unexpected error sending Internal Server Error 500
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
