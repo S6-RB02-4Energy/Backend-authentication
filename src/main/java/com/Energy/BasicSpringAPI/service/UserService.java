@@ -5,6 +5,7 @@ import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
@@ -14,6 +15,8 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Handles Users CRUD Operations and checks for username and email duplication
@@ -145,5 +148,39 @@ public class UserService implements UserInterface{
 //                .parseClaimsJws(jwt).getBody();
 //        return claims;
 //    }
+
+    /**
+     * Generates confirmationcode consisting out of 6 numbers
+     * @return confirmationcode as String
+     */
+    public String getRandomConfirmationCode(){
+        // It will generate 6 digit random Number.
+        // from 0 to 999999
+        Random rnd = new Random();
+        int number = rnd.nextInt(999999);
+
+        // this will convert any number sequence into 6 character.
+        return String.format("%06d", number);
+    }
+
+    /**
+     * Checks if the confirmationCode matches. If true updates the current logged in user.
+     * @param confirmationCode from frontend given by the logged in user
+     * @param userId of current logged in user
+     * @return
+     */
+    @Async
+    public Boolean checkEmailConfirmationCode(String confirmationCode, String userId){
+        UserEntity currentUser =  this.userRepository.findById(UUID.fromString(userId)).get();
+        System.out.println(currentUser);
+
+        if (currentUser.confirmationCode != null  && (currentUser.confirmationCode.equals(confirmationCode))){ //maybe check better with equals?
+            currentUser.emailConfirmed = true;
+            currentUser.confirmationCode = null;
+            this.save(currentUser);
+            return  true;
+        }
+        return false;
+    }
 
 }

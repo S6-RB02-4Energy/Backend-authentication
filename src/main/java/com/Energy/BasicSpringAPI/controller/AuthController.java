@@ -2,6 +2,7 @@ package com.Energy.BasicSpringAPI.controller;
 
 import com.Energy.BasicSpringAPI.DTO.UserDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
+import com.Energy.BasicSpringAPI.service.MailService;
 import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,8 @@ import java.util.StringTokenizer;
 public class AuthController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private MailService mailService;
 
 
     /**
@@ -65,36 +68,43 @@ public class AuthController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
     public ResponseEntity CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
-        try {
-            //Checking if username is already in use
-            if (userService.existsByUsername(user.getUsername())) {
-                return ResponseEntity
-                        .badRequest()
-                        .body("Error: Username is already taken!");
-            }
-            //Check if there is already user with that email
-            if (userService.existsByEmail(user.getEmail())) {
-                return ResponseEntity
-                        .badRequest()
-                        .body("Error: Email is already in use!");
-            }
+        //Checking if username is already in use
+        if (userService.existsByUsername(user.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Username is already taken!");
+        }
+        //Check if there is already user with that email
+        if (userService.existsByEmail(user.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Email is already in use!");
+        }
 
-            //Checking if role is null
-            if(user.role == null){
-                return ResponseEntity
-                        .badRequest()
-                        .body("Error: Role is not valid!");
-            }
+        //Checking if role is null
+        if(user.role == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Role is not valid!");
+        }
+
+        user.confirmationCode = this.userService.getRandomConfirmationCode();
+        user.emailConfirmed = false;
+
+
+        try {
             //TODO hash the password
             //user.setPassword(user.password);
             //After all the checks the user is saved in the database
             userService.save(user);
-            //returning the saved user and HTTP status 201 Created
-            return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
         } catch (Exception e) {
             //If there is an unexpected error sending Internal Server Error 500
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
+        //returning the saved user with confirmationcode and HTTP status 201 Created
+        return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
     }
 
 }
