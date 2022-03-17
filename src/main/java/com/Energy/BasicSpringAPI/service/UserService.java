@@ -1,6 +1,7 @@
 package com.Energy.BasicSpringAPI.service;
 
 import com.Energy.BasicSpringAPI.DTO.UserDto;
+import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.repository.UserRepository;
@@ -172,7 +173,6 @@ public class UserService implements UserInterface{
     @Async
     public Boolean checkEmailConfirmationCode(String confirmationCode, String userId){
         UserEntity currentUser =  this.userRepository.findById(UUID.fromString(userId)).get();
-        System.out.println(currentUser);
 
         if (currentUser.confirmationCode != null  && (currentUser.confirmationCode.equals(confirmationCode))){ //maybe check better with equals?
             currentUser.emailConfirmed = true;
@@ -181,6 +181,47 @@ public class UserService implements UserInterface{
             return  true;
         }
         return false;
+    }
+
+    /**
+     * This method is used to get all user information for backend checks.
+     * @param userId
+     * @return UserEntity
+     */
+    public UserEntity getUserById(UUID userId){
+        return this.userRepository.findById(userId).get();
+    }
+
+    /**
+     * This method is used to get user information for the frontend.
+     * @param userId
+     * @return userInfoDto without password and confirmation-code.
+     */
+    public UserInfoDto getUserInfo(UUID userId){
+        UserEntity user =  this.userRepository.findById(userId).get();
+        return new UserInfoDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.getEmailConfirmed()
+        );
+    }
+
+    /**
+     * Saves user and returns user information for frontend.
+     * @param user
+     * @return UserInfoDto without password and confirmation-code.
+     */
+    public UserInfoDto saveUser(UserEntity user){
+        UserEntity createdUser =  this.userRepository.save(user);
+        return new UserInfoDto(
+                createdUser.getId(),
+                createdUser.getUsername(),
+                createdUser.getEmail(),
+                createdUser.getRole(),
+                createdUser.getEmailConfirmed()
+        );
     }
 
 }

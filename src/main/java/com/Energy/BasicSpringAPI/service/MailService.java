@@ -81,7 +81,7 @@ public class MailService {
             message.setSubject("4Energy resend email-confirmation");
             message.setText("Dear " + userName + ","
                     + "\n\nIn order to have access to the 4Energy website your email must be confirmed."
-                    + "\nUse the code under this line to fill in the website:"
+                    + "\nUse the new code under this line to fill in the website:"
                     + "\n\n   " + confirmationCode
                     + "\n\nWith kind regards,"
                     + "\n4Energy"

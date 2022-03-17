@@ -88,6 +88,7 @@ public class AuthController {
                     .body("Error: Role is not valid!");
         }
 
+        // gets confirmation code for user to confirm his/her email with
         user.confirmationCode = this.userService.getRandomConfirmationCode();
         user.emailConfirmed = false;
 
@@ -102,9 +103,11 @@ public class AuthController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        //send mail with confirmation-code to user
         this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
-        //returning the saved user with confirmationcode and HTTP status 201 Created
-        return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
+
+        //returning the saved user with confirmation-code and HTTP status 201 Created
+        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
     }
 
 }

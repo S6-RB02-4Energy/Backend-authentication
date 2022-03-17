@@ -1,6 +1,7 @@
 package com.Energy.BasicSpringAPI.entity;
 
 import com.Energy.BasicSpringAPI.enumerators.Roles;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
@@ -29,10 +30,13 @@ public class UserEntity {
     @Column(nullable = false)
     @NonNull
     public String username;
+
     @Column(nullable = false)
     public String email;
+
     @Column(nullable = false)
     public String password;
+
     @Column()
     public Roles role;
 

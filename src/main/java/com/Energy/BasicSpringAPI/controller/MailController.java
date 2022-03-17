@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 /**
  * Confirms mail-address
@@ -32,13 +33,19 @@ public class MailController {
         this.mailService = mailService;
     }
 
+    /**
+     * Endpoint for confirming email address belongs to user.
+     * @param userId of currentUser. We should get currentUser from backend, instead of sending userId from frontend.
+     * @param confirmationCode
+     * @return UserInfoDto without password and confirmation-code.
+     */
     @PermitAll //TODO: user should be validated (with annotation for JWT-token).
     @PostMapping(value = "/confirmEmail/{userId}/{confirmationCode}")
     public ResponseEntity confirmEmail(@PathVariable(value="userId") String userId,
                                        @PathVariable(value="confirmationCode") String confirmationCode) {
 
         if (this.userService.checkEmailConfirmationCode(confirmationCode, userId)) {
-            return new ResponseEntity<>(userService.findById(Long.parseLong(userId)), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getUserInfo(UUID.fromString(userId)), HttpStatus.OK);
         };
 
         return ResponseEntity
@@ -48,14 +55,20 @@ public class MailController {
 
 
     //TODO: figure out how to get currentuser with JWT as a parameter, see example below
+    /**
+     * Resends a new confirmation-code to the email of the user.
+     * @param userId
+     * @return UserInfoDto without password and confirmation-code.
+     */
     @PermitAll
     @PostMapping(value = "/resendConfirmationCode/{userId}")
     public ResponseEntity resendConfirmationCode(@PathVariable(value = "userId") String userId
                                                  /*@Currentuser user (EXAMPLE)*/){
-        UserEntity currentUser = userService.findById(Long.parseLong(userId)).get();
+
+        UserEntity currentUser = userService.getUserById(UUID.fromString(userId));
         currentUser.confirmationCode = userService.getRandomConfirmationCode();
 
         mailService.resendConfirmationCode(currentUser.email, currentUser.username, currentUser.confirmationCode);
-        return new ResponseEntity<>(userService.save(currentUser), HttpStatus.OK);
+        return new ResponseEntity<>(userService.saveUser(currentUser), HttpStatus.OK);
     }
 }
