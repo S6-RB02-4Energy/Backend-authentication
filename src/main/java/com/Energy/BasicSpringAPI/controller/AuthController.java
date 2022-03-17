@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 @RestController
@@ -26,21 +27,44 @@ public class AuthController {
     @PermitAll
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity authenticate(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
-        UserService userService = new UserService();
         System.out.println(body);
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
-        final String email = tokenizer.nextToken();
+        final String userName = tokenizer.nextToken();
         final String password = tokenizer.nextToken();
-        System.out.println(email);
+        System.out.println(userName);
         System.out.println(password);
 
-        UserDto userDto = userService.getUser(email, password);
-        if (userDto ==null){
+        Optional<UserEntity> user = userService.getUser(userName, password);
+        if (user == null){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         else {
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
+            String userId = Long.toString(user.get().id);
+            String token = userService.createJWT(userId, user.get().email, user.get().username, -1);
+            if (userService.validateToken(token)) {
+                return new ResponseEntity<>(token, HttpStatus.OK);
 
+            }
+            else {
+                return new ResponseEntity<>("fuck off, you dumb ass cheater", HttpStatus.TOO_EARLY);
+            }
+        }
+    }
+
+
+    @RequestMapping(value = "/verifyToken", method = RequestMethod.POST)
+    public ResponseEntity VerifyTOken(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+        System.out.println(body);
+        final StringTokenizer tokenizer = new StringTokenizer(body, ":");
+        final String token = tokenizer.nextToken();
+        System.out.println(token);
+
+        if (userService.validateToken(token)) {
+            return new ResponseEntity<>(token, HttpStatus.OK);
+
+        }
+        else {
+            return new ResponseEntity<>("fuck off, you dumb ass cheater", HttpStatus.TOO_EARLY);
         }
     }
 
@@ -67,7 +91,6 @@ public class AuthController {
             }
             //TODO hash the password
             //user.setPassword(user.password);
-            userService.save(user);
             return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

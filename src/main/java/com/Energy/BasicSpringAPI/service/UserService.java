@@ -1,19 +1,28 @@
 package com.Energy.BasicSpringAPI.service;
 
-import com.Energy.BasicSpringAPI.DTO.UserDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.repository.UserRepository;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+
+
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+
+import static java.lang.Integer.parseInt;
 
 @Service
 public class UserService implements UserInterface{
@@ -31,7 +40,9 @@ public class UserService implements UserInterface{
     }
 
     @Override
-    public UserEntity save(UserEntity userEntity){
+    public UserEntity save(UserEntity userEntity) throws NoSuchAlgorithmException {
+        String password = doHashing(userEntity.password);
+        userEntity.password = password;
     return userRepository.save(userEntity);
     }
 
@@ -65,17 +76,34 @@ public class UserService implements UserInterface{
         return userRepository.existsByEmail(email);
     }
 
-    public UserDto getUser(String email, String password) throws SQLException, URISyntaxException, NoSuchAlgorithmException {
+    @Override
+    public Optional<UserEntity> findByEmailAnadPassword(String email, String password) {
+        return userRepository.findByEmailAndPassword(email, password);
+    }
 
-        String encryptedPassword = doHashing(password);
+    public Optional<UserEntity> getUser(String userName, String password) throws SQLException, URISyntaxException, NoSuchAlgorithmException {
 
-        String passwordSaved = "52cbd20b20d8a47049a376309a2d73b7a6af2334c62dd05ca221fc2daf9ca525";
-        if (encryptedPassword.equals(passwordSaved)){
-            return new UserDto("test", email, encryptedPassword, Roles.ADMIN);
+        try {
+            if(userRepository.existsByUsername(userName)){
+                String encryptedPassword = doHashing(password);
+                Optional<UserEntity> user = findByUsername(userName);
+
+                if (user.get().password.equals(encryptedPassword)){
+                    return user;
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
-        else {
-            return null;
-        }
+
+        return null;
     }
 
 
@@ -99,46 +127,57 @@ public class UserService implements UserInterface{
         return hexString.toString();
     }
 
-//    public User getUserFromToken(String token) {
+//    public UserEntity getUserFromToken(String token) {
 //        Claims decoded = decodeJWT(token);
 //
 //        String id = decoded.getId();
 //
-//        User u = getUser(parseInt(id));
+//        UserEntity u = getUser(parseInt(id));
 //
 //        return u;
 //    }
-//    public static String SECRET_KEY = "oeRaYY";
-//
-//    public String createJWT(String id, String issuer, String subject, long ttlMillis) {
-//
-//        //The JWT signature algorithm we will be using to sign the token
-//        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-//
-//        long nowMillis = System.currentTimeMillis();
-//        Date now = new Date(nowMillis);
-//
-//        //We will sign our JWT with our ApiKey secret
-//        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
-//        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-//
-//        //Let's set the JWT Claims
-//        JwtBuilder builder = Jwts.builder().setId(id)
-//                .setIssuedAt(now)
-//                .setSubject(subject)
-//                .setIssuer(issuer)
-//                .signWith(signatureAlgorithm, signingKey);
-//
-//        //Builds the JWT and serializes it to a compact, URL-safe string
-//        return builder.compact();
-//    }
-//    public Claims decodeJWT(String jwt) {
-//
-//        //This line will throw an exception if it is not a signed JWS (as expected)
-//        Claims claims = Jwts.parser()
-//                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
-//                .parseClaimsJws(jwt).getBody();
-//        return claims;
-//    }
+    public static String SECRET_KEY = "oeRaYY";
+
+    public String createJWT(String id, String issuer, String subject, long ttlMillis) {
+
+        //The JWT signature algorithm we will be using to sign the token
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        //We will sign our JWT with our ApiKey secret
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        //Let's set the JWT Claims
+        JwtBuilder builder = Jwts.builder().setId(id)
+                .setIssuedAt(now)
+                .setSubject(subject)
+                .setIssuer(issuer)
+                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(1).toInstant()))
+                .signWith(signatureAlgorithm, signingKey);
+
+        //Builds the JWT and serializes it to a compact, URL-safe string
+
+        return builder.compact();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new java.util.Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new JwtException("Expired or invalid JWT token");
+        }
+    }
+    public Claims decodeJWT(String jwt) {
+
+        //This line will throw an exception if it is not a signed JWS (as expected)
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .parseClaimsJws(jwt).getBody();
+        return claims;
+    }
 
 }
