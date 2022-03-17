@@ -108,6 +108,10 @@ public class UserService implements UserInterface{
         return hexString.toString();
     }
 
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 //    public User getUserFromToken(String token) {
 //        Claims decoded = decodeJWT(token);
 //
