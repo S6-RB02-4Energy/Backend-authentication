@@ -46,7 +46,7 @@ public class AuthController {
 
             }
             else {
-                return new ResponseEntity<>("fuck off, you dumb ass cheater", HttpStatus.TOO_EARLY);
+                return new ResponseEntity<>("The email or password ir wrong", HttpStatus.TOO_EARLY);
             }
         }
     }
