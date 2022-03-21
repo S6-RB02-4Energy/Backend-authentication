@@ -1,8 +1,9 @@
 package com.Energy.BasicSpringAPI.controller;
 
-import com.Energy.BasicSpringAPI.DTO.UserDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.service.MailService;
+import com.Energy.BasicSpringAPI.service.AuthService;
+import com.Energy.BasicSpringAPI.service.AuthenticationFilter;
 import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
+import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.doHashing;
 
 /**
  * Handles Authentication
@@ -27,45 +30,58 @@ import java.util.StringTokenizer;
 @RequestMapping("auth")
 public class AuthController {
     @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private AuthenticationFilter authenticationFilter;
+
+    @Autowired
     private UserService userService;
     @Autowired
     private MailService mailService;
 
-
-    /**
-     * Authenticating user
-     *
-     * @returns {ResponseEntity}
-     * @memberof AuthController
-     */
     @PermitAll
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping(value = "/login")
     public ResponseEntity authenticate(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
-        UserService userService = new UserService();
         System.out.println(body);
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
-        final String email = tokenizer.nextToken();
+        final String userName = tokenizer.nextToken();
         final String password = tokenizer.nextToken();
-        System.out.println(email);
+        System.out.println(userName);
         System.out.println(password);
 
-        UserDto userDto = userService.getUser(email, password);
-        if (userDto ==null){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        Optional<UserEntity> user = authService.getUser(userName, password);
+        if (user.isEmpty()){
+            return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
         else {
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
+            String userId = Long.toString(user.get().id);
+            String token = authenticationFilter.createJWT(userId, user.get().email, user.get().username, -1);
+            if (authenticationFilter.validateToken(token)) {
+                return new ResponseEntity<>(token, HttpStatus.OK);
 
+            }
+            else {
+                return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
+            }
         }
     }
 
-    /**
-     * Registering a new User
-     *
-     * @returns {ResponseEntity} user/Bad Request with error message
-     * @memberof AuthController
-     */
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+
+    @PostMapping(value = "/verifyToken")
+    public ResponseEntity VerifyToken(@RequestBody String body){
+        final StringTokenizer tokenizer = new StringTokenizer(body, ":");
+        final String token = tokenizer.nextToken();
+
+        if (authenticationFilter.validateToken(token)) {
+            return new ResponseEntity<>("The token is valid", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("The token is invalid", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/register")
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
     public ResponseEntity CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         //Checking if username is already in use

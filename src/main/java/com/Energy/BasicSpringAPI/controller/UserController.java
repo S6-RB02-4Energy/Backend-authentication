@@ -7,6 +7,7 @@ import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -36,6 +37,7 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity getAllUsers() {
         try{
             return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
@@ -52,6 +54,7 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("/all/{role}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity getAllUsersByRole(@PathVariable Roles role) {
         try{
             return new ResponseEntity<>(userService.findAllByRole(role), HttpStatus.OK);
@@ -128,10 +131,16 @@ public class UserController {
      * @memberof UserController
      */
     @PutMapping("/update")
-    public ResponseEntity updateUser(@RequestBody UserEntity body) {
+    public ResponseEntity updateUser(@RequestBody UserEntity body, @RequestBody Long userId) {
         try{
             // If the ORM finds user with existing id, it just changes the different columns
-            return new ResponseEntity<>(userService.save(body), HttpStatus.OK);
+            if(Objects.equals(body.id, userId)){
+                return new ResponseEntity<>(userService.save(body), HttpStatus.OK);
+
+            }else{
+                return new ResponseEntity<>("Unauthorized to change other user", HttpStatus.UNAUTHORIZED);
+
+            }
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
@@ -169,6 +178,7 @@ public class UserController {
      */
     //TODO not sure if it is smart to have a function wiping the user database
     @DeleteMapping("/wipeUsersDatabase")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity deleteAllUsers(@RequestBody Long userId) {
         try{
             if(this.userService.findById(userId).get().role == Roles.ADMIN){

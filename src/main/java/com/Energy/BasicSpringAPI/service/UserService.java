@@ -1,23 +1,33 @@
 package com.Energy.BasicSpringAPI.service;
 
 import com.Energy.BasicSpringAPI.DTO.UserDto;
-import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.repository.UserRepository;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+
+
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+
+import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.doHashing;
+import static java.lang.Integer.parseInt;
 
 /**
  * Handles Users CRUD Operations and checks for username and email duplication
@@ -74,40 +84,7 @@ public class UserService implements UserInterface{
         return userRepository.existsByEmail(email);
     }
 
-    public UserDto getUser(String email, String password) throws SQLException, URISyntaxException, NoSuchAlgorithmException {
-
-        String encryptedPassword = doHashing(password);
-
-        String passwordSaved = "52cbd20b20d8a47049a376309a2d73b7a6af2334c62dd05ca221fc2daf9ca525";
-        if (encryptedPassword.equals(passwordSaved)){
-            return new UserDto("test", email, encryptedPassword, Roles.ADMIN);
-        }
-        else {
-            return null;
-        }
-    }
-
-
-    public static String doHashing (String password) throws NoSuchAlgorithmException {
-        final MessageDigest digest = MessageDigest.getInstance("SHA3-256");
-        final byte[] hashbytes = digest.digest(
-                password.getBytes(StandardCharsets.UTF_8));
-        String sha3Hex = bytesToHex(hashbytes);
-        
-        return sha3Hex;
-    }
-    private static String bytesToHex(byte[] hash) {
-        StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (int i = 0; i < hash.length; i++) {
-            String hex = Integer.toHexString(0xff & hash[i]);
-            if(hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
-    }
-
+    @Override
     public Optional<UserEntity> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
