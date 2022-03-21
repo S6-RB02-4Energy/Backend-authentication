@@ -18,8 +18,4 @@ public interface UserInterface {
         Boolean existsByUsername(String username);
         Boolean existsByEmail(String email);
 
-        Optional<UserEntity> findByEmailAnadPassword(String email, String password);
-
-
-
 }
