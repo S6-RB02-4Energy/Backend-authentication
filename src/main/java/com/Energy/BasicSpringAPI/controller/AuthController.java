@@ -64,7 +64,7 @@ public class AuthController {
 
         }
         else {
-            return new ResponseEntity<>("fuck off, you dumb ass cheater", HttpStatus.TOO_EARLY);
+            return new ResponseEntity<>("The token is invalid", HttpStatus.TOO_EARLY);
         }
     }
 
