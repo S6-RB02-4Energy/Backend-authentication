@@ -15,12 +15,12 @@ import java.util.Optional;
 public interface UserInterface {
         List<UserEntity> findAll();
         List<UserEntity> findAllByRole(Roles role);
-        UserEntity save(UserEntity user) throws NoSuchAlgorithmException;
+        UserEntity save(UserEntity user);
         Optional<UserEntity> findById(long id);
         void deleteById(long id);
         void deleteAll();
         Optional<UserEntity> findByUsername(String username);
         Boolean existsByUsername(String username);
         Boolean existsByEmail(String email);
-
+        Optional<UserEntity> findByEmail(String email);
 }

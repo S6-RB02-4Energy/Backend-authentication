@@ -1,6 +1,5 @@
 package com.Energy.BasicSpringAPI.controller;
 
-import com.Energy.BasicSpringAPI.DTO.UserDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.service.AuthService;
 import com.Energy.BasicSpringAPI.service.AuthenticationFilter;
@@ -19,8 +18,9 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
+import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.doHashing;
+
 @RestController
-//@CrossOrigin
 @RequestMapping("auth")
 public class AuthController {
     @Autowired
@@ -33,7 +33,7 @@ public class AuthController {
     private UserService userService;
 
     @PermitAll
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping(value = "/login")
     public ResponseEntity authenticate(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         System.out.println(body);
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
@@ -43,7 +43,7 @@ public class AuthController {
         System.out.println(password);
 
         Optional<UserEntity> user = authService.getUser(userName, password);
-        if (user == null){
+        if (user.isEmpty()){
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
         else {
@@ -60,8 +60,8 @@ public class AuthController {
     }
 
 
-    @RequestMapping(value = "/verifyToken", method = RequestMethod.POST)
-    public ResponseEntity VerifyTOken(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    @PostMapping(value = "/verifyToken")
+    public ResponseEntity VerifyToken(@RequestBody String body){
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
         final String token = tokenizer.nextToken();
 
@@ -73,9 +73,9 @@ public class AuthController {
         }
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping(value = "/register")
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
-    public ResponseEntity CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    public ResponseEntity CreateUser(@RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         try {
             if (userService.existsByUsername(user.getUsername())) {
                 return ResponseEntity
@@ -94,8 +94,7 @@ public class AuthController {
                         .badRequest()
                         .body("Error: Role is not valid!");
             }
-            //TODO hash the password
-            //user.setPassword(user.password);
+            user.password = doHashing(user.password);
             return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

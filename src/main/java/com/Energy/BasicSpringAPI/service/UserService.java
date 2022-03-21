@@ -46,9 +46,7 @@ public class UserService implements UserInterface{
     }
 
     @Override
-    public UserEntity save(UserEntity userEntity) throws NoSuchAlgorithmException {
-        String password = doHashing(userEntity.password);
-        userEntity.password = password;
+    public UserEntity save(UserEntity userEntity){
     return userRepository.save(userEntity);
     }
 
@@ -80,6 +78,11 @@ public class UserService implements UserInterface{
     @Override
     public Boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }

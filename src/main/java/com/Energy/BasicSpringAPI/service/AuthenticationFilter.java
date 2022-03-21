@@ -1,10 +1,7 @@
 package com.Energy.BasicSpringAPI.service;
 
 import io.jsonwebtoken.*;
-import org.bouncycastle.jcajce.BCFKSLoadStoreParameter;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
@@ -46,7 +43,7 @@ public class AuthenticationFilter {
 //
 //        return u;
 //    }
-    public static String SECRET_KEY = "oeRaYY";
+    private static final String SECRET_KEY = "oeRaYY";
 
     public String createJWT(String id, String issuer, String subject, long ttlMillis) {
 
@@ -77,13 +74,7 @@ public class AuthenticationFilter {
         boolean validation = false;
         try {
             Jws<Claims> claims  = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-            if(!claims.getBody().getExpiration().before(new java.util.Date())){
-                validation = true;
-            }
-            else
-            {
-                validation = false;
-            }
+            validation = !claims.getBody().getExpiration().before(new java.util.Date());
 
         } catch (ExpiredJwtException e) {
             System.out.println(" Token expired ");
@@ -91,15 +82,12 @@ public class AuthenticationFilter {
             System.out.println(" Some other exception in JWT parsing ");
         }
         return validation;
-
     }
-    public Claims decodeJWT(String jwt) {
 
+    public Claims decodeJWT(String jwt) {
         //This line will throw an exception if it is not a signed JWS (as expected)
-        Claims claims = Jwts.parser()
+        return Jwts.parser()
                 .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
                 .parseClaimsJws(jwt).getBody();
-        return claims;
     }
-
 }
