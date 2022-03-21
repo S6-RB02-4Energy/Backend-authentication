@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.doHashing;
 import static java.lang.Integer.parseInt;
 
 /**
