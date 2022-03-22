@@ -134,7 +134,7 @@ public class UserController {
     public ResponseEntity updateUser(@RequestBody UserEntity body, @RequestBody Long userId) {
         try{
             // If the ORM finds user with existing id, it just changes the different columns
-            if(Objects.equals(body.id, userId)){
+            if(Objects.equals(body.getId(), userId)){
                 return new ResponseEntity<>(userService.save(body), HttpStatus.OK);
 
             }else{

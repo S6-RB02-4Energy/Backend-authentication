@@ -11,7 +11,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: "jdbc:mysql://localhost:3306/energy4"
+    url: "jdbc:mysql://localhost:3307/4energy_auth_service"
     username: "root"
     password: "root"
 eureka:

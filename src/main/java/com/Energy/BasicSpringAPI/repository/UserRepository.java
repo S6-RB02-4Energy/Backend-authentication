@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * JPA Repository for the users table
@@ -27,6 +28,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Boolean existsByEmail(String email);
 
-    Optional<UserEntity> findByEmailAndPassword(String email, String password);
-
+    Optional<UserEntity> findById(UUID uuid);
 }
