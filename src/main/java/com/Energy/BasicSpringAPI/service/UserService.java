@@ -1,6 +1,7 @@
 package com.Energy.BasicSpringAPI.service;
 
 import com.Energy.BasicSpringAPI.DTO.UserDto;
+import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.repository.UserRepository;

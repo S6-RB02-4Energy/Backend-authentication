@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.doHashing;
 
@@ -55,7 +56,7 @@ public class AuthController {
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
         else {
-            String userId = Long.toString(user.get().id);
+            String userId = String.valueOf(user.get().getId());
             String token = authenticationFilter.createJWT(userId, user.get().email, user.get().username, -1);
             if (authenticationFilter.validateToken(token)) {
                 return new ResponseEntity<>(token, HttpStatus.OK);
@@ -112,18 +113,18 @@ public class AuthController {
         try {
             //TODO hash the password
             //user.setPassword(user.password);
-            //After all the checks the user is saved in the database
-            userService.save(user);
+
+            //send mail with confirmation-code to user
+            this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
+
+            //returning the saved user with confirmation-code and HTTP status 201 Created
+            return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
         } catch (Exception e) {
             //If there is an unexpected error sending Internal Server Error 500
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        //send mail with confirmation-code to user
-        this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
 
-        //returning the saved user with confirmation-code and HTTP status 201 Created
-        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
     }
 
 }
