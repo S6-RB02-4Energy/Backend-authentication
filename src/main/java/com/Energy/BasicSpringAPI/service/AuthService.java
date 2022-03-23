@@ -22,12 +22,12 @@ public class AuthService {
 //    private AuthenticationFilter authenticationFilter;
 
 
-    public Optional<UserEntity> getUser(String userName, String password) {
+    public Optional<UserEntity> getUser(String email, String password) {
 
         try {
-            if(userRepository.existsByUsername(userName)){
+            if(userRepository.existsByEmail(email)){
                 String encryptedPassword = AuthenticationFilter.doHashing(password);
-                Optional<UserEntity> user = findByUsername(userName);
+                Optional<UserEntity> user =  userRepository.findByEmail(email);
 
                 if (user.isPresent() && user.get().password.equals(encryptedPassword)){
                     return user;

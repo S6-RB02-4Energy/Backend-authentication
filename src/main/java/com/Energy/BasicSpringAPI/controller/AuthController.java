@@ -46,7 +46,7 @@ public class AuthController {
     @PostMapping(value = "/login")
     public ResponseEntity authenticate(HttpServletResponse response, @RequestBody LoginDto loginDto) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
 
-        Optional<UserEntity> user = authService.getUser(loginDto.getUserName(), loginDto.getPassword());
+        Optional<UserEntity> user = authService.getUser(loginDto.getEmail(), loginDto.getPassword());
         if (user.isEmpty()){
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
