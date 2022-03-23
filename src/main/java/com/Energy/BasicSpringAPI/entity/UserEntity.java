@@ -27,11 +27,11 @@ public class UserEntity {
     @Type(type = "uuid-char")
     private UUID id = UUID.randomUUID();
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NonNull
     public String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String email;
 
     @Column(nullable = false)

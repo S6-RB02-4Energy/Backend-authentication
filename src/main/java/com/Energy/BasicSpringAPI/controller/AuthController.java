@@ -1,5 +1,6 @@
 package com.Energy.BasicSpringAPI.controller;
 
+import com.Energy.BasicSpringAPI.DTO.LoginDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.service.MailService;
 import com.Energy.BasicSpringAPI.service.AuthService;
@@ -43,15 +44,9 @@ public class AuthController {
 
     @PermitAll
     @PostMapping(value = "/login")
-    public ResponseEntity authenticate(HttpServletResponse response, @RequestBody String body) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
-        System.out.println(body);
-        final StringTokenizer tokenizer = new StringTokenizer(body, ":");
-        final String userName = tokenizer.nextToken();
-        final String password = tokenizer.nextToken();
-        System.out.println(userName);
-        System.out.println(password);
+    public ResponseEntity authenticate(HttpServletResponse response, @RequestBody LoginDto loginDto) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
 
-        Optional<UserEntity> user = authService.getUser(userName, password);
+        Optional<UserEntity> user = authService.getUser(loginDto.getUserName(), loginDto.getPassword());
         if (user.isEmpty()){
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
@@ -108,7 +103,7 @@ public class AuthController {
         // gets confirmation code for user to confirm his/her email with
         user.confirmationCode = this.userService.getRandomConfirmationCode();
         user.emailConfirmed = false;
-
+        user.password = AuthenticationFilter.doHashing(user.password);
 
         try {
             //TODO hash the password
