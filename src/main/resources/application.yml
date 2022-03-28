@@ -1,11 +1,19 @@
 server:
-    port: 8081
+    port: 8083
 spring:
   datasource:
-    url: "jdbc:mysql://localhost:3306/test"
-    username: "root"
-    password:
+    url: "jdbc:h2:mem:virtual"
+    username: "sa"
+    password: "password"
+    jpa:
+      database-platform: "org.hibernate.dialect.H2Dialect"
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8083/eureka
+
+# Changed to h2 for the GitHub CI(Change back when working locally, if you want)
+#      datasource:
+#        url: "jdbc:mysql://localhost:3306/test"
+#        username: "root"
+#        password:

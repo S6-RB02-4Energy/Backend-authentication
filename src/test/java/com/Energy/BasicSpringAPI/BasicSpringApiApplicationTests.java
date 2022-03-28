@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BasicSpringApiApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void exampleTest() {
 		assertEquals("Example Test", "Example Test");
 	}
 
