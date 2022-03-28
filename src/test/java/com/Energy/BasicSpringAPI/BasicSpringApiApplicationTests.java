@@ -8,6 +8,7 @@ class BasicSpringApiApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assertEquals("Example Test", "Example Test");
 	}
 
 }
