@@ -19,7 +19,6 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-          distribution: 'openjdk'
           cache: maven
       - name: Format the code according the linting rules
         run: mvn editorconfig:format
@@ -35,7 +34,6 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'openjdk'
         cache: maven
     - name: Run unit tests
       run: mvn test
@@ -51,7 +49,6 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'openjdk'
         cache: maven
     - name: Cache the Maven packages to speed up build
       uses: actions/cache@v1
