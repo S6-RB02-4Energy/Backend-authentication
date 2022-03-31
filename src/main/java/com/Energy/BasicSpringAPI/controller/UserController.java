@@ -71,7 +71,7 @@ public class UserController {
      * @returns {ResponseEntity} UserEntity
      * @memberof UserController
      */
-    @GetMapping("/{id}")
+    @GetMapping("id/{id}")
     public ResponseEntity getUserById(@PathVariable String id) {
         try{
             return new ResponseEntity<>(userService.findById(Integer.parseInt(id)).get(), HttpStatus.OK);
@@ -88,7 +88,7 @@ public class UserController {
      * @returns {ResponseEntity} UserEntity
      * @memberof UserController
      */
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity getUserByEmail(@PathVariable String email) {
         try{
             Optional<UserEntity> user = userService.findByEmail(email);
@@ -109,7 +109,7 @@ public class UserController {
      * @returns {ResponseEntity} UserEntity
      * @memberof UserController
      */
-    @GetMapping("/{username}")
+    @GetMapping("/username/{username}")
     public ResponseEntity getUserByUsername(@PathVariable String username) {
         try{
             Optional<UserEntity> user = userService.findByUsername(username);
