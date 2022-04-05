@@ -53,15 +53,16 @@ public class UserService implements UserInterface{
     @Override
     public UserEntity save(UserEntity userEntity){
     return userRepository.save(userEntity);
+
     }
 
     @Override
-    public Optional<UserEntity> findById(long id) {
+    public Optional<UserEntity> findById(UUID id) {
         return userRepository.findById(id);
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(UUID id) {
         userRepository.deleteById(id);
     }
 

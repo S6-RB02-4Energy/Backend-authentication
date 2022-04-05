@@ -1,12 +1,10 @@
 package com.Energy.BasicSpringAPI.entity;
 
 import com.Energy.BasicSpringAPI.enumerators.Roles;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -46,4 +44,16 @@ public class UserEntity {
     @Column(nullable = false, columnDefinition = "Boolean default false")
     public Boolean emailConfirmed;
 
+    public UserEntity() {
+    }
+
+    public UserEntity(UUID id, @NonNull String username, String email, String password, Roles role, String confirmationCode, Boolean emailConfirmed) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.confirmationCode = confirmationCode;
+        this.emailConfirmed = emailConfirmed;
+    }
 }
