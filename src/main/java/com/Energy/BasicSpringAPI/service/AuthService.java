@@ -21,7 +21,7 @@ public class AuthService {
     public Optional<UserEntity> getUser(String email, String password) {
 
         try {
-            if(userRepository.existsByEmail(email)) {
+            if (userRepository.existsByEmail(email)) {
                 String hashedPassword = AuthenticationFilter.doHashing(password);
                 Optional<UserEntity> user =  userRepository.findByEmail(email);
 
