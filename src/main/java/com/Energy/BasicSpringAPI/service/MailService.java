@@ -28,7 +28,6 @@ public class MailService {
                 });
 
         try {
-
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("samirzalmay1000@gmail.com"));
             message.setRecipients(
@@ -46,12 +45,10 @@ public class MailService {
 
             Transport.send(message);
 
-
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
-
 
     public void resendConfirmationCode(String email, String userName, String confirmationCode){
         final String userMailAddress = "samirzalmay1000@gmail.com"; //should come from application.properties
@@ -88,7 +85,6 @@ public class MailService {
                     + "\n\nThis is an automated email. No response will be given on return mails.");
 
             Transport.send(message);
-
 
         } catch (MessagingException e) {
             e.printStackTrace();
