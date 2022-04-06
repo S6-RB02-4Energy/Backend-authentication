@@ -73,13 +73,12 @@ public class AuthController {
     @PostMapping(value = "/register")
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
     public ResponseEntity CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
-        //Checking if username is already in use
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body("Error: Username is already taken!");
         }
-        //Check if there is already user with that email
+
         if (userService.existsByEmail(user.getEmail())) {
             return ResponseEntity
                     .badRequest()
@@ -92,22 +91,14 @@ public class AuthController {
                     .body("Error: Role is not valid!");
         }
 
-        // gets confirmation code for user to confirm his/her email with
         user.confirmationCode = this.userService.getRandomConfirmationCode();
         user.emailConfirmed = false;
         user.password = AuthenticationFilter.doHashing(user.password);
 
         try {
-            //TODO hash the password
-            //user.setPassword(user.password);
-
-            //send mail with confirmation-code to user
             this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
-
-            //returning the saved user with confirmation-code and HTTP status 201 Created
             return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
         } catch (Exception e) {
-            //If there is an unexpected error sending Internal Server Error 500
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
