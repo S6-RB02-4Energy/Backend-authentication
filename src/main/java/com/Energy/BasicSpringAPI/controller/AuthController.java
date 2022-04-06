@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
-import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.doHashing;
+import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.getBcryptHash;
 
 /**
  * Handles Authentication
@@ -93,7 +93,7 @@ public class AuthController {
 
         user.confirmationCode = this.userService.getRandomConfirmationCode();
         user.emailConfirmed = false;
-        user.password = AuthenticationFilter.doHashing(user.password);
+        user.password = AuthenticationFilter.getBcryptHash(user.password);
 
         try {
             this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);

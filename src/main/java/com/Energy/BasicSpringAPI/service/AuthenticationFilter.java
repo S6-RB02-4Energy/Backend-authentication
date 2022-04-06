@@ -1,6 +1,8 @@
 package com.Energy.BasicSpringAPI.service;
 
 import io.jsonwebtoken.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -35,6 +37,15 @@ public class AuthenticationFilter {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    public static String getBcryptHash(String password) throws NoSuchAlgorithmException {
+        PasswordEncoder passwordEncoder = getPasswordEncoder();
+        return passwordEncoder.encode(password);
+    }
+
+    private static PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder(16);
     }
 
     //    public UserEntity getUserFromToken(String token) {

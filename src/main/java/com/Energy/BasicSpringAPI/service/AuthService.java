@@ -22,7 +22,7 @@ public class AuthService {
 
         try {
             if (userRepository.existsByEmail(email)) {
-                String hashedPassword = AuthenticationFilter.doHashing(password);
+                String hashedPassword = AuthenticationFilter.getBcryptHash(password);
                 Optional<UserEntity> user =  userRepository.findByEmail(email);
 
                 if (user.isPresent() && user.get().password.equals(hashedPassword)){
