@@ -47,7 +47,7 @@ public class AuthController {
     public ResponseEntity authenticate(HttpServletResponse response,
                                        @RequestBody LoginDto loginDto) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         Optional<UserEntity> user = authService.getUser(loginDto.getEmail(), loginDto.getPassword());
-        if (user.isEmpty()){
+        if (user.isEmpty()) {
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
         String userId = String.valueOf(user.get().getId());
@@ -57,7 +57,6 @@ public class AuthController {
         }
         return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
     }
-
 
     @PostMapping(value = "/verifyToken")
     public ResponseEntity VerifyToken(@RequestBody String body) {
@@ -71,8 +70,9 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
-    public ResponseEntity CreateUser(HttpServletResponse response, @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    // TODO @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
+    public ResponseEntity CreateUser(HttpServletResponse response,
+                                     @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity
                     .badRequest()
@@ -85,7 +85,7 @@ public class AuthController {
                     .body("Error: Email is already in use!");
         }
 
-        if(user.role == null) {
+        if (user.role == null) {
             return ResponseEntity
                     .badRequest()
                     .body("Error: Role is not valid!");
