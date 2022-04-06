@@ -1,14 +1,15 @@
 package com.Energy.BasicSpringAPI.entity;
 
 import com.Energy.BasicSpringAPI.enumerators.Roles;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
