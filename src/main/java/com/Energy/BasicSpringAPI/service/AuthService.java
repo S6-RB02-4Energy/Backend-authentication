@@ -22,10 +22,10 @@ public class AuthService {
 
         try {
             if(userRepository.existsByEmail(email)) {
-                String encryptedPassword = AuthenticationFilter.doHashing(password);
+                String hashedPassword = AuthenticationFilter.doHashing(password);
                 Optional<UserEntity> user =  userRepository.findByEmail(email);
 
-                if (user.isPresent() && user.get().password.equals(encryptedPassword)){
+                if (user.isPresent() && user.get().password.equals(hashedPassword)){
                     return user;
                 }
                 else {
