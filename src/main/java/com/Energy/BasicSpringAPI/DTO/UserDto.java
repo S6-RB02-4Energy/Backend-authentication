@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class UserDto {
-    //private Long userId;
     private @Getter @Setter
     String username;
     private @Getter @Setter
