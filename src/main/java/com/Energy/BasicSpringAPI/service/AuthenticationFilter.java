@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 @Component
 public class AuthenticationFilter {
 
+    @Deprecated
     public static String doHashing (String password) throws NoSuchAlgorithmException {
         final MessageDigest digest = MessageDigest.getInstance("SHA3-256");
         final byte[] hashBytes = digest.digest(
@@ -22,6 +23,8 @@ public class AuthenticationFilter {
 
         return sha3Hex;
     }
+
+    @Deprecated
     private static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (int i = 0; i < hash.length; i++) {
