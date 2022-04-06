@@ -54,7 +54,6 @@ public class AuthController {
         String token = authenticationFilter.createJWT(userId, user.get().email, user.get().username, -1);
         if (authenticationFilter.validateToken(token)) {
             return new ResponseEntity<>(token, HttpStatus.OK);
-
         }
         return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
     }
@@ -112,8 +111,5 @@ public class AuthController {
             //If there is an unexpected error sending Internal Server Error 500
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
     }
-
 }
