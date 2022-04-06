@@ -68,7 +68,6 @@ public class MailService {
                 });
 
         try {
-
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("samirzalmay1000@gmail.com"));
             message.setRecipients(
