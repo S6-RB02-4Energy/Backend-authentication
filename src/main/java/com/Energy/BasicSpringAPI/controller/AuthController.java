@@ -50,17 +50,13 @@ public class AuthController {
         if (user.isEmpty()){
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
-        else {
-            String userId = String.valueOf(user.get().getId());
-            String token = authenticationFilter.createJWT(userId, user.get().email, user.get().username, -1);
-            if (authenticationFilter.validateToken(token)) {
-                return new ResponseEntity<>(token, HttpStatus.OK);
+        String userId = String.valueOf(user.get().getId());
+        String token = authenticationFilter.createJWT(userId, user.get().email, user.get().username, -1);
+        if (authenticationFilter.validateToken(token)) {
+            return new ResponseEntity<>(token, HttpStatus.OK);
 
-            }
-            else {
-                return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
-            }
         }
+        return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
     }
 
 
@@ -72,9 +68,7 @@ public class AuthController {
         if (authenticationFilter.validateToken(token)) {
             return new ResponseEntity<>("The token is valid", HttpStatus.OK);
         }
-        else {
-            return new ResponseEntity<>("The token is invalid", HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>("The token is invalid", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(value = "/register")
