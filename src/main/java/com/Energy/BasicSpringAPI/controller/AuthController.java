@@ -44,7 +44,8 @@ public class AuthController {
 
     @PermitAll
     @PostMapping(value = "/login")
-    public ResponseEntity authenticate(HttpServletResponse response, @RequestBody LoginDto loginDto) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    public ResponseEntity authenticate(HttpServletResponse response,
+                                       @RequestBody LoginDto loginDto) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
 
         Optional<UserEntity> user = authService.getUser(loginDto.getEmail(), loginDto.getPassword());
         if (user.isEmpty()){
