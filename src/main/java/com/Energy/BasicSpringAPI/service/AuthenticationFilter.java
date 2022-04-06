@@ -16,9 +16,9 @@ public class AuthenticationFilter {
 
     public static String doHashing (String password) throws NoSuchAlgorithmException {
         final MessageDigest digest = MessageDigest.getInstance("SHA3-256");
-        final byte[] hashbytes = digest.digest(
+        final byte[] hashBytes = digest.digest(
                 password.getBytes(StandardCharsets.UTF_8));
-        String sha3Hex = bytesToHex(hashbytes);
+        String sha3Hex = bytesToHex(hashBytes);
 
         return sha3Hex;
     }
