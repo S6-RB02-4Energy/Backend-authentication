@@ -28,13 +28,9 @@ public class AuthService {
                 if (user.isPresent() && user.get().password.equals(hashedPassword)){
                     return user;
                 }
-                else {
-                    return Optional.empty();
-                }
-            }
-            else {
                 return Optional.empty();
             }
+            return Optional.empty();
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
