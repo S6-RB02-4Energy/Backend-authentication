@@ -1,19 +1,20 @@
 server:
-    port: 8083
+    port: 8082
 spring:
+  mvc:
+    converters:
+      preferred-json-mapper: gson
+  application:
+    name: AuthenticationAPI
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
   datasource:
-    url: "jdbc:h2:mem:virtual"
-    username: "sa"
-    password: "password"
-    jpa:
-      database-platform: "org.hibernate.dialect.H2Dialect"
+    url: "jdbc:mysql://localhost:3307/4energy_auth_service"
+    username: "root"
+    password: "root"
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8083/eureka
-
-# Changed to h2 for the GitHub CI(Change back when working locally, if you want)
-#      datasource:
-#        url: "jdbc:mysql://localhost:3306/test"
-#        username: "root"
-#        password:
+      defaultZone: http://localhost:8761/eureka
