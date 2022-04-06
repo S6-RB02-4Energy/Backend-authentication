@@ -17,15 +17,11 @@ public class AuthService {
     public Optional<UserEntity> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-//Not used do we need it?
-    //    @Autowired
-//    private AuthenticationFilter authenticationFilter;
-
 
     public Optional<UserEntity> getUser(String email, String password) {
 
         try {
-            if(userRepository.existsByEmail(email)){
+            if(userRepository.existsByEmail(email)) {
                 String encryptedPassword = AuthenticationFilter.doHashing(password);
                 Optional<UserEntity> user =  userRepository.findByEmail(email);
 
