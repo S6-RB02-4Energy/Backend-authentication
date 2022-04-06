@@ -54,6 +54,7 @@ public class MailService {
         final String userMailAddress = "samirzalmay1000@gmail.com"; //should come from application.properties
         final String password = "Group3RandomPass"; //should come from application.properties
 
+        // TODO don't hard code email secrets
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.port", "587");

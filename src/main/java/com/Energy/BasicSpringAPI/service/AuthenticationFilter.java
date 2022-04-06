@@ -43,6 +43,8 @@ public class AuthenticationFilter {
 //
 //        return u;
 //    }
+
+    // TODO don't hard code SECRET_KEY
     private static final String SECRET_KEY = "oeRaYY";
 
     public String createJWT(String id, String issuer, String subject, long ttlMillis) {
