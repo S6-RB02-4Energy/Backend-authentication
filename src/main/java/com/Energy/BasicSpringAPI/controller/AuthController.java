@@ -86,8 +86,7 @@ public class AuthController {
                     .body("Error: Email is already in use!");
         }
 
-        //Checking if role is null
-        if(user.role == null){
+        if(user.role == null) {
             return ResponseEntity
                     .badRequest()
                     .body("Error: Role is not valid!");
