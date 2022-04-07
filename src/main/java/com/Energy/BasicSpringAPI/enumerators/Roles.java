@@ -8,5 +8,5 @@ public enum Roles{
     ADMIN,
     UTILITY,
     CONSUMER,
-    LCONSUMER
+    LARGECONSUMER
 }

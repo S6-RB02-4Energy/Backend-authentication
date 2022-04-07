@@ -1,6 +1,8 @@
 package com.Energy.BasicSpringAPI.service;
 
 import io.jsonwebtoken.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -14,14 +16,17 @@ import java.time.ZonedDateTime;
 @Component
 public class AuthenticationFilter {
 
+    @Deprecated
     public static String doHashing (String password) throws NoSuchAlgorithmException {
         final MessageDigest digest = MessageDigest.getInstance("SHA3-256");
-        final byte[] hashbytes = digest.digest(
+        final byte[] hashBytes = digest.digest(
                 password.getBytes(StandardCharsets.UTF_8));
-        String sha3Hex = bytesToHex(hashbytes);
+        String sha3Hex = bytesToHex(hashBytes);
 
         return sha3Hex;
     }
+
+    @Deprecated
     private static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (int i = 0; i < hash.length; i++) {
@@ -34,6 +39,15 @@ public class AuthenticationFilter {
         return hexString.toString();
     }
 
+    public static String getBcryptHash(String password) throws NoSuchAlgorithmException {
+        PasswordEncoder passwordEncoder = getPasswordEncoder();
+        return passwordEncoder.encode(password);
+    }
+
+    private static PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder(16);
+    }
+
     //    public UserEntity getUserFromToken(String token) {
 //        Claims decoded = decodeJWT(token);
 //
@@ -43,6 +57,8 @@ public class AuthenticationFilter {
 //
 //        return u;
 //    }
+
+    // TODO don't hard code SECRET_KEY
     private static final String SECRET_KEY = "oeRaYY";
 
     public String createJWT(String id, String issuer, String subject, long ttlMillis) {

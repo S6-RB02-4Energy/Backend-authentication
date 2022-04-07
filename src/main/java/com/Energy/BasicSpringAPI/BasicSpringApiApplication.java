@@ -19,9 +19,9 @@ public class BasicSpringApiApplication {
 
 
 	public static void main(String[] args) {
-		try{
+		try {
 			SpringApplication.run(BasicSpringApiApplication.class, args);
-		}catch (HibernateException e){
+		} catch (HibernateException e){
 			//Logging the error and stopping the application
 			logger.log(Level.SEVERE, "DB error on startup, shutting down...");
 			System.exit(0);
