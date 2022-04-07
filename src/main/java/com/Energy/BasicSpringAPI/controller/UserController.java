@@ -142,7 +142,7 @@ public class UserController {
             updated.email = (body.email == null) ? updated.email : body.email;
             updated.username = (body.username == null) ? updated.username : body.username;
             updated.role = (body.role == null) ? updated.role : body.role;
-            updated.password = (body.password == null) ? updated.password : AuthenticationFilter.doHashing(body.password);
+            updated.password = (body.password == null) ? updated.password : AuthenticationFilter.getBcryptHash(body.password);
                 return new ResponseEntity<>(userService.save(updated), HttpStatus.OK);
         }
         catch (Exception e){

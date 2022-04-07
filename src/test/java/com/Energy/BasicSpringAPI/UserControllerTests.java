@@ -62,7 +62,7 @@ public class UserControllerTests {
         UserEntity user1 = new UserEntity();
         UserEntity user2 = new UserEntity();
         user1.setRole(Roles.ADMIN);
-        user1.setRole(Roles.LCONSUMER);
+        user1.setRole(Roles.LARGECONSUMER);
         mockList.add(user1);
         when(service.findAllByRole(Roles.ADMIN)).thenReturn(mockList);
         this.mockMvc.perform(get("/user/all/ADMIN")).andDo(print()).andExpect(status().isOk())

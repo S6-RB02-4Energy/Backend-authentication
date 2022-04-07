@@ -45,7 +45,7 @@ public class AuthControllerTests {
         UserEntity user1 = new UserEntity();
         user1.username = "u1";
         user1.email = "user@example.com";
-        user1.password = AuthenticationFilter.doHashing("qawsedrf");
+        user1.password = AuthenticationFilter.getBcryptHash("qawsedrf");
         when(authService.getUser(user1.email, user1.password)).thenReturn(Optional.of(user1));
         when(authenticationFilter.createJWT(user1.getId().toString(), user1.email,user1.username, -1)).thenReturn("fakeToken");
         when(authenticationFilter.validateToken("fakeToken")).thenReturn(true);
