@@ -1,12 +1,9 @@
 package com.Energy.BasicSpringAPI.DTO;
 
 import com.Energy.BasicSpringAPI.enumerators.Roles;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.NonNull;
 
-import javax.persistence.Column;
 import java.util.UUID;
 
 public class UserInfoDto {
