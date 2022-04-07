@@ -106,9 +106,6 @@ public class AuthController {
         user.password = AuthenticationFilter.doHashing(user.password);
 
         try {
-            //TODO hash the password
-            //user.setPassword(user.password);
-
             //send mail with confirmation-code to user
             this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
 

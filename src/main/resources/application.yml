@@ -6,15 +6,23 @@ spring:
       preferred-json-mapper: gson
   application:
     name: AuthenticationAPI
-  jpa:
-    database: mysql
-    hibernate:
-      ddl-auto: update
+
   datasource:
-    url: "jdbc:mysql://localhost:3307/4energy_auth_service"
-    username: "root"
-    password: "root"
+    url: "jdbc:h2:mem:virtual"
+    username: "sa"
+    password: "password"
+    jpa:
+      hibernate:
+        ddl-auto: update
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
+#
+#      datasource:
+#        url: "jdbc:h2:mem:virtual"
+#        username: "sa"
+#        password: "password"
+#        jpa:
+#          hibernate:
+#            ddl-auto: update

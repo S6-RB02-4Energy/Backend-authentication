@@ -56,4 +56,14 @@ public class UserEntity {
         this.confirmationCode = confirmationCode;
         this.emailConfirmed = emailConfirmed;
     }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }
