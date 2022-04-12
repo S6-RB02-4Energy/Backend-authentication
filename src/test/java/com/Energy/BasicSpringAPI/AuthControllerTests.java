@@ -53,7 +53,7 @@ public class AuthControllerTests {
                 "        \"email\":\"" +
                 user1.email +
                 "\",        \"username\":\"u1\",\n" +
-                "        \"password\": " + user1.password + "        \n" +
+                "        \"password\": " + "\"" + user1.password + "\"" + "        \n" +
                 "}";
         this.mockMvc.perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson)).andDo(print()).andExpect(status().isOk())
@@ -81,8 +81,8 @@ public class AuthControllerTests {
         UserInfoDto userInfoDto = new UserInfoDto(user1.getId(), user1.username, user1.email, user1.role, user1.emailConfirmed);
         when(userService.saveUser(user1)).thenReturn(userInfoDto);
         String requestJson = "{\n" +
-                "        \"email\":\"" + user1.email + "\n" +
-                "\",        \"username\":\"u1\",\n" +
+                "        \"email\":\"" + user1.email + "\"," + "\n" +
+                "       \"username\":\"u1\",\n" +
                 "        \"password\": " + "\"" + user1.password + "\"" + ",        \n" +
                 "        \"role\": " + "\"" + user1.role + "\"" + "        \n" +
                 "}";
