@@ -14,12 +14,7 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    public Optional<UserEntity> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
     public Optional<UserEntity> getUser(String email, String password) {
-
         try {
             if (userRepository.existsByEmail(email)) {
                 String hashedPassword = AuthenticationFilter.getBcryptHash(password);
