@@ -2,26 +2,22 @@ package com.Energy.BasicSpringAPI.controller;
 
 import com.Energy.BasicSpringAPI.DTO.LoginDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
-import com.Energy.BasicSpringAPI.service.MailService;
 import com.Energy.BasicSpringAPI.service.AuthService;
 import com.Energy.BasicSpringAPI.service.AuthenticationFilter;
+import com.Energy.BasicSpringAPI.service.MailService;
 import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.PermitAll;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.util.Optional;
 import java.util.StringTokenizer;
-import java.util.UUID;
-
-import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.getBcryptHash;
 
 /**
  * Handles Authentication
@@ -44,8 +40,7 @@ public class AuthController {
 
     @PermitAll
     @PostMapping(value = "/login")
-    public ResponseEntity authenticate(HttpServletResponse response,
-                                       @RequestBody LoginDto loginDto) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    public ResponseEntity authenticate(@RequestBody LoginDto loginDto){
         Optional<UserEntity> user = authService.getUser(loginDto.getEmail(), loginDto.getPassword());
         if (user.isEmpty()) {
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
@@ -71,8 +66,7 @@ public class AuthController {
 
     @PostMapping(value = "/register")
     // TODO @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
-    public ResponseEntity CreateUser(HttpServletResponse response,
-                                     @RequestBody UserEntity user) throws IOException, SQLException, URISyntaxException, NoSuchAlgorithmException {
+    public ResponseEntity CreateUser(@RequestBody UserEntity user) throws NoSuchAlgorithmException {
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity
                     .badRequest()
