@@ -26,9 +26,6 @@ public class AuthService {
                 return Optional.empty();
             }
             return Optional.empty();
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
         }
         return Optional.empty();
     }

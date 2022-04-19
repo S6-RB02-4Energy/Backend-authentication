@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +25,12 @@ public class AuthenticationFilter {
     }
 
     private static PasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder(16);
+        return new BCryptPasswordEncoder();
+    }
+
+    public static Boolean isPasswordValid(String currentPassword, String dbPassword) {
+        Boolean isMatched = getPasswordEncoder().matches(currentPassword, dbPassword);
+        return isMatched;
     }
 
 
@@ -44,11 +50,11 @@ public class AuthenticationFilter {
 
         //Let's set the JWT Claims
         JwtBuilder builder = Jwts.builder().setId(id)
-                .setIssuedAt(now)
-                .setSubject(subject)
-                .setIssuer(issuer)
-                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(1).toInstant()))
-                .signWith(signatureAlgorithm, signingKey);
+            .setIssuedAt(now)
+            .setSubject(subject)
+            .setIssuer(issuer)
+            .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(1).toInstant()))
+            .signWith(signatureAlgorithm, signingKey);
 
         //Builds the JWT and serializes it to a compact, URL-safe string
 
@@ -58,12 +64,12 @@ public class AuthenticationFilter {
     public boolean validateToken(String token) {
         boolean validation = false;
         try {
-            Jws<Claims> claims  = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
             validation = !claims.getBody().getExpiration().before(new java.util.Date());
 
         } catch (ExpiredJwtException e) {
             System.out.println(" Token expired ");
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println(" Some other exception in JWT parsing ");
         }
         return validation;
@@ -72,7 +78,7 @@ public class AuthenticationFilter {
     public Claims decodeJWT(String jwt) {
         //This line will throw an exception if it is not a signed JWS (as expected)
         return Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
-                .parseClaimsJws(jwt).getBody();
+            .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+            .parseClaimsJws(jwt).getBody();
     }
 }
