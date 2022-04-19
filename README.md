@@ -15,3 +15,16 @@ in the application.properties you can also put in a server port :
 # server:
 #    port: 8081
 ```
+
+## .env file
+For security reasons the .env file is not pushed to GitHub.
+For the app to work locally:
+```
+1. Create file .env in the root directory
+2. Make sure you do not assign type to it(the app automatically recognizes it) 
+3. Copy the contents of .envtemplate into the file you created
+4. Enter values to each environment variable
+5. You are good to go
+```
+
+_Note: if you add any new variables in the .env, please update the template_

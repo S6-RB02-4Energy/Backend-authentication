@@ -1,24 +1,26 @@
 package com.Energy.BasicSpringAPI.service;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Objects;
 import java.util.Properties;
 
 @Service
 public class MailService {
-
+    Dotenv dotenv = Dotenv.load();
     public void sendEmailConfirmation(String email, String userName, String confirmationCode){
-        final String userMailAddress = "samirzalmay1000@gmail.com"; //should come from application.properties
-        final String password = "Group3RandomPass"; //should come from application.properties
+        final String userMailAddress = dotenv.get("EMAIL_ADDRESS");
+        final String password = dotenv.get("EMAIL_PW");
 
         Properties prop = new Properties();
-        prop.put("mail.smtp.host", "smtp.gmail.com");
-        prop.put("mail.smtp.port", "587");
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.starttls.enable", "true");
+        prop.put("mail.smtp.host", dotenv.get("SMTP_HOST"));
+        prop.put("mail.smtp.port", dotenv.get("SMTP_PORT"));
+        prop.put("mail.smtp.auth", dotenv.get("SMTP_AUTH"));
+        prop.put("mail.smtp.starttls.enable", dotenv.get("SMTP_START_TLS"));
 
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
@@ -29,7 +31,7 @@ public class MailService {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("samirzalmay1000@gmail.com"));
+            message.setFrom(new InternetAddress(Objects.requireNonNull(dotenv.get("EMAIL_ADDRESS"))));
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(email)
@@ -51,15 +53,15 @@ public class MailService {
     }
 
     public void resendConfirmationCode(String email, String userName, String confirmationCode){
-        final String userMailAddress = "samirzalmay1000@gmail.com"; //should come from application.properties
-        final String password = "Group3RandomPass"; //should come from application.properties
+        final String userMailAddress = dotenv.get("EMAIL_ADDRESS");
+        final String password = dotenv.get("EMAIL_PW");
 
-        // TODO don't hard code email secrets
         Properties prop = new Properties();
-        prop.put("mail.smtp.host", "smtp.gmail.com");
-        prop.put("mail.smtp.port", "587");
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.starttls.enable", "true");
+        prop.put("mail.smtp.host", dotenv.get("SMTP_HOST"));
+        prop.put("mail.smtp.port", dotenv.get("SMTP_PORT"));
+        prop.put("mail.smtp.auth", dotenv.get("SMTP_AUTH"));
+        prop.put("mail.smtp.starttls.enable", dotenv.get("SMTP_START_TLS"));
+
 
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
@@ -70,7 +72,7 @@ public class MailService {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("samirzalmay1000@gmail.com"));
+            message.setFrom(new InternetAddress(Objects.requireNonNull(dotenv.get("EMAIL_ADDRESS"))));
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(email)

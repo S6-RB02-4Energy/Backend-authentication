@@ -1,34 +1,18 @@
 package com.Energy.BasicSpringAPI.service;
 
-import com.Energy.BasicSpringAPI.DTO.UserDto;
 import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.repository.UserRepository;
-import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
-import static com.Energy.BasicSpringAPI.service.AuthenticationFilter.doHashing;
-import static java.lang.Integer.parseInt;
 
 /**
  * Handles Users CRUD Operations and checks for username and email duplication
@@ -53,15 +37,16 @@ public class UserService implements UserInterface{
     @Override
     public UserEntity save(UserEntity userEntity){
     return userRepository.save(userEntity);
+
     }
 
     @Override
-    public Optional<UserEntity> findById(long id) {
+    public Optional<UserEntity> findById(UUID id) {
         return userRepository.findById(id);
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(UUID id) {
         userRepository.deleteById(id);
     }
 
@@ -90,48 +75,6 @@ public class UserService implements UserInterface{
         return userRepository.findByEmail(email);
     }
 
-//    public User getUserFromToken(String token) {
-//        Claims decoded = decodeJWT(token);
-//
-//        String id = decoded.getId();
-//
-//        User u = getUser(parseInt(id));
-//
-//        return u;
-//    }
-//    public static String SECRET_KEY = "oeRaYY";
-//
-//    public String createJWT(String id, String issuer, String subject, long ttlMillis) {
-//
-//        //The JWT signature algorithm we will be using to sign the token
-//        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-//
-//        long nowMillis = System.currentTimeMillis();
-//        Date now = new Date(nowMillis);
-//
-//        //We will sign our JWT with our ApiKey secret
-//        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
-//        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-//
-//        //Let's set the JWT Claims
-//        JwtBuilder builder = Jwts.builder().setId(id)
-//                .setIssuedAt(now)
-//                .setSubject(subject)
-//                .setIssuer(issuer)
-//                .signWith(signatureAlgorithm, signingKey);
-//
-//        //Builds the JWT and serializes it to a compact, URL-safe string
-//        return builder.compact();
-//    }
-//    public Claims decodeJWT(String jwt) {
-//
-//        //This line will throw an exception if it is not a signed JWS (as expected)
-//        Claims claims = Jwts.parser()
-//                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
-//                .parseClaimsJws(jwt).getBody();
-//        return claims;
-//    }
-
     /**
      * Generates confirmationcode consisting out of 6 numbers
      * @return confirmationcode as String
@@ -147,10 +90,10 @@ public class UserService implements UserInterface{
     }
 
     /**
-     * Checks if the confirmationCode matches. If true updates the current logged in user.
-     * @param confirmationCode from frontend given by the logged in user
-     * @param userId of current logged in user
-     * @return
+     * Checks if the confirmationCode matches. If true updates the current logged-in user.
+     * @param confirmationCode from frontend given by the logged-in user
+     * @param userId of current logged-in user
+     * @return boolean
      */
     @Async
     public Boolean checkEmailConfirmationCode(String confirmationCode, String userId){

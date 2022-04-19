@@ -3,6 +3,7 @@ package com.Energy.BasicSpringAPI.controller;
 
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
+import com.Energy.BasicSpringAPI.service.AuthenticationFilter;
 import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,9 +73,9 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("id/{id}")
-    public ResponseEntity getUserById(@PathVariable String id) {
+    public ResponseEntity getUserById(@PathVariable UUID id) {
         try{
-            return new ResponseEntity<>(userService.findById(Integer.parseInt(id)).get(), HttpStatus.OK);
+            return new ResponseEntity<>(userService.findById(id).get(), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
@@ -131,16 +132,16 @@ public class UserController {
      * @memberof UserController
      */
     @PutMapping("/update")
-    public ResponseEntity updateUser(@RequestBody UserEntity body, @RequestBody Long userId) {
+    public ResponseEntity updateUser(@RequestBody UserEntity body) {
         try{
             // If the ORM finds user with existing id, it just changes the different columns
-            if(Objects.equals(body.getId(), userId)){
-                return new ResponseEntity<>(userService.save(body), HttpStatus.OK);
-
-            }else{
-                return new ResponseEntity<>("Unauthorized to change other user", HttpStatus.UNAUTHORIZED);
-
-            }
+            //TODO should we check if someone tries to update other user?
+            UserEntity updated = userService.getUserById(body.getId());
+            updated.email = (body.email == null) ? updated.email : body.email;
+            updated.username = (body.username == null) ? updated.username : body.username;
+            updated.role = (body.role == null) ? updated.role : body.role;
+            updated.password = (body.password == null) ? updated.password : AuthenticationFilter.getBcryptHash(body.password);
+                return new ResponseEntity<>(userService.save(updated), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
@@ -155,12 +156,9 @@ public class UserController {
      * @memberof UserController
      */
     @DeleteMapping ("/delete/{id}")
-    public ResponseEntity deleteUserByUserId(@PathVariable Long id, @RequestBody Long userId) {
+    public ResponseEntity deleteUserByUserId(@PathVariable UUID id) {
         try{
-            Roles role = this.userService.findById(userId).get().role;
-            if(!Objects.equals(id, userId) && role != Roles.ADMIN){
-                return new ResponseEntity<>("Cannot delete another user, unless being an admin", HttpStatus.FORBIDDEN);
-            }
+            //TODO should we add additional layer of security?
             this.userService.deleteById(id);
             return new ResponseEntity<>("User Successfully Deleted", HttpStatus.OK);
         }
@@ -179,7 +177,7 @@ public class UserController {
     //TODO not sure if it is smart to have a function wiping the user database
     @DeleteMapping("/wipeUsersDatabase")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity deleteAllUsers(@RequestBody Long userId) {
+    public ResponseEntity deleteAllUsers(@RequestBody UUID userId) {
         try{
             if(this.userService.findById(userId).get().role == Roles.ADMIN){
                 this.userService.deleteAll();

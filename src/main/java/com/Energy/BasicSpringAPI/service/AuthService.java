@@ -14,10 +14,6 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    public Optional<UserEntity> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
     public Optional<UserEntity> getUser(String email, String password) {
         if (userRepository.existsByEmail(email)) {
             Optional<UserEntity> user = userRepository.findByEmail(email);

@@ -21,7 +21,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name="user")
+@Table(name="users")
 public class UserEntity {
     @Id
     @Column(name = "id", nullable = false, unique = true)
@@ -47,4 +47,26 @@ public class UserEntity {
     @Column(nullable = false, columnDefinition = "Boolean default false")
     public Boolean emailConfirmed;
 
+    public UserEntity() {
+    }
+
+    public UserEntity(UUID id, @NonNull String username, String email, String password, Roles role, String confirmationCode, Boolean emailConfirmed) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.confirmationCode = confirmationCode;
+        this.emailConfirmed = emailConfirmed;
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }
