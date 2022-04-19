@@ -15,15 +15,10 @@ public class AuthService {
     private UserRepository userRepository;
 
     public Optional<UserEntity> getUser(String email, String password) {
-        try {
-            if (userRepository.existsByEmail(email)) {
-                String hashedPassword = AuthenticationFilter.getBcryptHash(password);
-                Optional<UserEntity> user =  userRepository.findByEmail(email);
-
-                if (user.isPresent() && user.get().password.equals(hashedPassword)){
-                    return user;
-                }
-                return Optional.empty();
+        if (userRepository.existsByEmail(email)) {
+            Optional<UserEntity> user = userRepository.findByEmail(email);
+            if (user.isPresent() && AuthenticationFilter.isPasswordValid(password, user.get().getPassword())) {
+                return user;
             }
             return Optional.empty();
         }
