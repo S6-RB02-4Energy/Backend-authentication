@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - development # or the name of your main branch
+      - SonarQube # or the name of your main branch
 
 jobs:
   build:
