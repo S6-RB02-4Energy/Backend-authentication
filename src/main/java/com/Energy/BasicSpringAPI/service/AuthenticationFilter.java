@@ -44,6 +44,7 @@ public class AuthenticationFilter {
         Map<String, Object> claims = new HashMap<>();
         // to add the role in the claims
         claims.put("role",user.get().getRole().toString());
+        claims.put("id",user.get().getId().toString());
 
 
         //The JWT signature algorithm we will be using to sign the token
@@ -59,7 +60,6 @@ public class AuthenticationFilter {
         //Let's set the JWT Claims
         JwtBuilder builder = Jwts.builder()
             .setClaims(claims)
-            .setId(user.get().getId().toString())
             .setIssuedAt(now)
             .setSubject(user.get().getEmail())
             .setIssuer(user.get().getUsername())

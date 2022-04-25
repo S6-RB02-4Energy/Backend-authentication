@@ -74,9 +74,10 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("id/{id}")
-    public ResponseEntity getUserById(@PathVariable UUID id) {
+    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER'")
+    public ResponseEntity getUserById(@PathVariable UUID GivenId, @RequestHeader String role ){
         try{
-            return new ResponseEntity<>(userService.findById(id).get(), HttpStatus.OK);
+            return new ResponseEntity<>(userService.findById(GivenId).get(), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
@@ -133,18 +134,20 @@ public class UserController {
      * @memberof UserController
      */
     @PutMapping("/update")
-    public ResponseEntity updateUser(@RequestBody UserEntity body) {
-        try{
+    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER'")
+    public ResponseEntity updateUser(@RequestBody UserEntity body, @RequestHeader String role, @RequestHeader String id) {
+        try {
             // If the ORM finds user with existing id, it just changes the different columns
-            //TODO should we check if someone tries to update other user?
-            UserEntity updated = userService.getUserById(body.getId());
-            updated.email = (body.email == null) ? updated.email : body.email;
-            updated.username = (body.username == null) ? updated.username : body.username;
-            updated.role = (body.role == null) ? updated.role : body.role;
-            updated.password = (body.password == null) ? updated.password : AuthenticationFilter.getBcryptHash(body.password);
+            if (id.equals(body.getId().toString())) {
+                UserEntity updated = userService.getUserById(body.getId());
+                updated.email = (body.email == null) ? updated.email : body.email;
+                updated.username = (body.username == null) ? updated.username : body.username;
+                updated.password = (body.password == null) ? updated.password : AuthenticationFilter.getBcryptHash(body.password);
                 return new ResponseEntity<>(userService.save(updated), HttpStatus.OK);
-        }
-        catch (Exception e){
+            } else {
+                return new ResponseEntity<>("Internal service error", HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
             return new ResponseEntity<>("A problem occurred, while updating the user", HttpStatus.INTERNAL_SERVER_ERROR);
         }

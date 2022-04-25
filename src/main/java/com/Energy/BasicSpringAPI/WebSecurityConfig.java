@@ -30,7 +30,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/*").authenticated()
             .antMatchers("/auth/**").permitAll()
             .antMatchers("/user/**").permitAll()
-//            .antMatchers("/auth/verifyToken").hasRole("CONSUMER")
             .and()
             .cors()
             .and()

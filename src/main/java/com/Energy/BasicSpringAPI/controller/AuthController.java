@@ -52,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/verifyToken")
-    @PreAuthorize("#role == 'CONSUMER'")
+//    @PreAuthorize("#role == 'CONSUMER'")
     public ResponseEntity VerifyToken(@RequestBody String body, @RequestHeader String role) {
         System.out.println(role);
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
