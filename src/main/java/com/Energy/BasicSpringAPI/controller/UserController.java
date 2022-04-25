@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -24,7 +23,6 @@ import java.util.logging.Logger;
  */
 @RestController
 @RequestMapping("user")
-//TODO After JWT assign roles that can access the functions
 public class UserController {
     @Autowired
     private UserService userService;
@@ -74,7 +72,7 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("id/{id}")
-    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER'")
+    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
     public ResponseEntity getUserById(@PathVariable UUID GivenId, @RequestHeader String role ){
         try{
             return new ResponseEntity<>(userService.findById(GivenId).get(), HttpStatus.OK);
@@ -92,7 +90,8 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("/email/{email}")
-    public ResponseEntity getUserByEmail(@PathVariable String email) {
+    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
+    public ResponseEntity getUserByEmail(@PathVariable String email, @RequestHeader String role ) {
         try{
             Optional<UserEntity> user = userService.findByEmail(email);
             if(user.isPresent()){
@@ -113,7 +112,8 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("/username/{username}")
-    public ResponseEntity getUserByUsername(@PathVariable String username) {
+    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
+    public ResponseEntity getUserByUsername(@PathVariable String username, @RequestHeader String role ) {
         try{
             Optional<UserEntity> user = userService.findByUsername(username);
             if(user.isPresent()){
@@ -134,7 +134,7 @@ public class UserController {
      * @memberof UserController
      */
     @PutMapping("/update")
-    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER'")
+    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
     public ResponseEntity updateUser(@RequestBody UserEntity body, @RequestHeader String role, @RequestHeader String id) {
         try {
             // If the ORM finds user with existing id, it just changes the different columns
@@ -160,9 +160,9 @@ public class UserController {
      * @memberof UserController
      */
     @DeleteMapping ("/delete/{id}")
-    public ResponseEntity deleteUserByUserId(@PathVariable UUID id) {
+    @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
+    public ResponseEntity deleteUserByUserId(@PathVariable UUID id, @RequestHeader String role) {
         try{
-            //TODO should we add additional layer of security?
             this.userService.deleteById(id);
             return new ResponseEntity<>("User Successfully Deleted", HttpStatus.OK);
         }
@@ -180,8 +180,8 @@ public class UserController {
      */
     //TODO not sure if it is smart to have a function wiping the user database
     @DeleteMapping("/wipeUsersDatabase")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity deleteAllUsers(@RequestBody UUID userId) {
+    @PreAuthorize("#role == 'ADMIN'")
+    public ResponseEntity deleteAllUsers(@RequestBody UUID userId, @RequestHeader String role) {
         try{
             if(this.userService.findById(userId).get().role == Roles.ADMIN){
                 this.userService.deleteAll();
