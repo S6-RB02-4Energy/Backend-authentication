@@ -47,6 +47,12 @@ public class UserEntity {
     @Column(nullable = false, columnDefinition = "Boolean default false")
     public Boolean emailConfirmed;
 
+    @Column()
+    public String address;
+
+    @Column()
+    public boolean userConsent;
+
     public UserEntity() {
     }
 

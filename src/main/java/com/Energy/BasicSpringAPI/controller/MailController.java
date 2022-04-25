@@ -1,6 +1,5 @@
 package com.Energy.BasicSpringAPI.controller;
 
-import com.Energy.BasicSpringAPI.DTO.UserDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.service.MailService;
 import com.Energy.BasicSpringAPI.service.UserService;
@@ -9,12 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 /**
