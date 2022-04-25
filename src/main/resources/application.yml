@@ -3,18 +3,20 @@ server:
 spring:
     datasource:
         url: jdbc:h2:mem:virtual
-        username: sa
-        password: password
+        username: root
+        password: root
         driverClassName: org.h2.Driver
     jpa:
         spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
         generate-ddl: true
         hibernate:
             ddl-auto: update
+    application:
+      name: AUTHENTICATIONAPI
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8083/eureka
+      defaultZone: http://localhost:8761/eureka
 
 # Changed to h2 for the GitHub CI(Change back when working locally, if you want)
 #      datasource:

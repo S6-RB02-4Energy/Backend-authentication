@@ -9,10 +9,8 @@ import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import java.security.NoSuchAlgorithmException;
@@ -40,13 +38,13 @@ public class AuthController {
 
     @PermitAll
     @PostMapping(value = "/login")
-    public ResponseEntity authenticate(@RequestBody LoginDto loginDto){
+    public ResponseEntity authenticate(@RequestBody LoginDto loginDto) {
         Optional<UserEntity> user = authService.getUser(loginDto.getEmail(), loginDto.getPassword());
         if (user.isEmpty()) {
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
         String userId = String.valueOf(user.get().getId());
-        String token = authenticationFilter.createJWT(userId, user.get().email, user.get().username, -1);
+        String token = authenticationFilter.createJWT(user);
         if (authenticationFilter.validateToken(token)) {
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
@@ -54,7 +52,9 @@ public class AuthController {
     }
 
     @PostMapping(value = "/verifyToken")
-    public ResponseEntity VerifyToken(@RequestBody String body) {
+    @PreAuthorize("#role == 'CONSUMER'")
+    public ResponseEntity VerifyToken(@RequestBody String body, @RequestHeader String role) {
+        System.out.println(role);
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
         final String token = tokenizer.nextToken();
 
@@ -69,20 +69,20 @@ public class AuthController {
     public ResponseEntity CreateUser(@RequestBody UserEntity user) throws NoSuchAlgorithmException {
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity
-                    .badRequest()
-                    .body("Error: Username is already taken!");
+                .badRequest()
+                .body("Error: Username is already taken!");
         }
 
         if (userService.existsByEmail(user.getEmail())) {
             return ResponseEntity
-                    .badRequest()
-                    .body("Error: Email is already in use!");
+                .badRequest()
+                .body("Error: Email is already in use!");
         }
 
         if (user.role == null) {
             return ResponseEntity
-                    .badRequest()
-                    .body("Error: Role is not valid!");
+                .badRequest()
+                .body("Error: Role is not valid!");
         }
 
         user.confirmationCode = this.userService.getRandomConfirmationCode();

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
  * @class UserController
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("user")
 //TODO After JWT assign roles that can access the functions
 public class UserController {
     @Autowired
@@ -38,8 +39,8 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity getAllUsers() {
+    @PreAuthorize("#role == 'ADMIN'")
+    public ResponseEntity getAllUsers(@RequestHeader String role) {
         try{
             return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
         }
@@ -55,10 +56,10 @@ public class UserController {
      * @memberof UserController
      */
     @GetMapping("/all/{role}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity getAllUsersByRole(@PathVariable Roles role) {
+    @PreAuthorize("#role == 'ADMIN'")
+    public ResponseEntity getAllUsersByRole(@PathVariable Roles givenRole, @RequestHeader String role) {
         try{
-            return new ResponseEntity<>(userService.findAllByRole(role), HttpStatus.OK);
+            return new ResponseEntity<>(userService.findAllByRole(givenRole), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
