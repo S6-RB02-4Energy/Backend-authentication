@@ -34,7 +34,7 @@ public class MailController {
      */
     @PermitAll //TODO: user should be validated (with annotation for JWT-token).
     @PostMapping(value = "/confirmEmail/{userId}/{confirmationCode}")
-    public ResponseEntity confirmEmail(@PathVariable(value="userId") String userId,
+    public ResponseEntity<?> confirmEmail(@PathVariable(value="userId") String userId,
                                        @PathVariable(value="confirmationCode") String confirmationCode) {
 
         if (this.userService.checkEmailConfirmationCode(confirmationCode, userId)) {
@@ -55,7 +55,7 @@ public class MailController {
      */
     @PermitAll
     @PostMapping(value = "/resendConfirmationCode/{userId}")
-    public ResponseEntity resendConfirmationCode(@PathVariable(value = "userId") String userId
+    public ResponseEntity<?> resendConfirmationCode(@PathVariable(value = "userId") String userId
                                                  /*@Currentuser user (EXAMPLE)*/){
 
         UserEntity currentUser = userService.getUserById(UUID.fromString(userId));

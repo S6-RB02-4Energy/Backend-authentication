@@ -38,7 +38,7 @@ public class AuthController {
 
     @PermitAll
     @PostMapping(value = "/login")
-    public ResponseEntity authenticate(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> authenticate(@RequestBody LoginDto loginDto) {
         Optional<UserEntity> user = authService.getUser(loginDto.getEmail(), loginDto.getPassword());
         if (user.isEmpty()) {
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
@@ -53,7 +53,7 @@ public class AuthController {
 
     @PostMapping(value = "/verifyToken")
 //    @PreAuthorize("#role == 'CONSUMER'")
-    public ResponseEntity verifyToken(@RequestBody String body, @RequestHeader String role) {
+    public ResponseEntity<?> verifyToken(@RequestBody String body, @RequestHeader String role) {
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
         final String token = tokenizer.nextToken();
 
@@ -64,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
+    public ResponseEntity<?> createUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
         UserEntity user = new UserEntity(userInfoDto);
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity
