@@ -1,5 +1,6 @@
 package com.Energy.BasicSpringAPI.entity;
 
+import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,12 +52,12 @@ public class UserEntity {
     public String address;
 
     @Column()
-    public boolean userConsent;
+    public Boolean userConsent;
 
     public UserEntity() {
     }
 
-    public UserEntity(UUID id, @NonNull String username, String email, String password, Roles role, String confirmationCode, Boolean emailConfirmed) {
+    public UserEntity(UUID id, @NonNull String username, String email, String password, Roles role, String confirmationCode, Boolean emailConfirmed, Boolean userConsent, String address) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -64,15 +65,33 @@ public class UserEntity {
         this.role = role;
         this.confirmationCode = confirmationCode;
         this.emailConfirmed = emailConfirmed;
+        this.userConsent = userConsent;
+        this.address = address;
+    }
+
+    public UserEntity(UserInfoDto userInfoDto) {
+        this.username = userInfoDto.getUsername();
+        this.email = userInfoDto.getEmail();
+        this.password = userInfoDto.getPassword();
+        this.role = userInfoDto.getRole();
+        this.confirmationCode = userInfoDto.getConfirmationCode();
+        this.userConsent = userInfoDto.getUserConsent();
+        this.address = userInfoDto.getAddress();
+        this.emailConfirmed = userInfoDto.getEmailConfirmed();
     }
 
     @Override
     public String toString() {
         return "UserEntity{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
+            "id=" + id +
+            ", username='" + username + '\'' +
+            ", email='" + email + '\'' +
+            ", password='" + password + '\'' +
+            ", role=" + role +
+            ", confirmationCode='" + confirmationCode + '\'' +
+            ", emailConfirmed=" + emailConfirmed +
+            ", address='" + address + '\'' +
+            ", userConsent=" + userConsent +
+            '}';
     }
 }

@@ -1,6 +1,7 @@
 package com.Energy.BasicSpringAPI.controller;
 
 import com.Energy.BasicSpringAPI.DTO.LoginDto;
+import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.service.AuthService;
 import com.Energy.BasicSpringAPI.service.AuthenticationFilter;
@@ -54,7 +55,6 @@ public class AuthController {
     @PostMapping(value = "/verifyToken")
 //    @PreAuthorize("#role == 'CONSUMER'")
     public ResponseEntity VerifyToken(@RequestBody String body, @RequestHeader String role) {
-        System.out.println(role);
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
         final String token = tokenizer.nextToken();
 
@@ -66,7 +66,8 @@ public class AuthController {
 
     @PostMapping(value = "/register")
     // TODO @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
-    public ResponseEntity CreateUser(@RequestBody UserEntity user) throws NoSuchAlgorithmException {
+    public ResponseEntity CreateUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
+        UserEntity user = new UserEntity(userInfoDto);
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity
                 .badRequest()

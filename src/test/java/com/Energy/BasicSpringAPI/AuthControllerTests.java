@@ -78,7 +78,7 @@ public class AuthControllerTests {
         user1.role = Roles.CONSUMER;
         when(userService.existsByUsername(user1.username)).thenReturn(false);
         when(userService.existsByEmail(user1.email)).thenReturn(false);
-        UserInfoDto userInfoDto = new UserInfoDto(user1.getId(), user1.username, user1.email, user1.role, user1.emailConfirmed);
+        UserInfoDto userInfoDto = new UserInfoDto(user1.getId(), user1.username, user1.email, user1.role, user1.emailConfirmed,user1.getConfirmationCode(), user1.getAddress());
         when(userService.saveUser(user1)).thenReturn(userInfoDto);
         String requestJson = "{\n" +
                 "        \"email\":\"" + user1.email + "\"," + "\n" +
