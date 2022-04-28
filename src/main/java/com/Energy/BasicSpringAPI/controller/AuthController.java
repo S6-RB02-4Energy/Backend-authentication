@@ -10,7 +10,6 @@ import com.Energy.BasicSpringAPI.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
@@ -54,7 +53,7 @@ public class AuthController {
 
     @PostMapping(value = "/verifyToken")
 //    @PreAuthorize("#role == 'CONSUMER'")
-    public ResponseEntity VerifyToken(@RequestBody String body, @RequestHeader String role) {
+    public ResponseEntity verifyToken(@RequestBody String body, @RequestHeader String role) {
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
         final String token = tokenizer.nextToken();
 
@@ -65,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity CreateUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
+    public ResponseEntity createUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
         UserEntity user = new UserEntity(userInfoDto);
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity
