@@ -39,7 +39,7 @@ public class UserController {
      */
     @GetMapping("/all")
     @PreAuthorize("#role == 'ADMIN'")
-    public ResponseEntity getAllUsers(@RequestHeader String role) {
+    public ResponseEntity<?> getAllUsers(@RequestHeader String role) {
         try{
             return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
         }
@@ -54,9 +54,9 @@ public class UserController {
      * @returns {ResponseEntity} List of UserEntity Objects
      * @memberof UserController
      */
-    @GetMapping("/all/{role}")
+    @GetMapping("/all/{givenRole}")
     @PreAuthorize("#role == 'ADMIN'")
-    public ResponseEntity getAllUsersByRole(@PathVariable Roles givenRole, @RequestHeader String role) {
+    public ResponseEntity<?> getAllUsersByRole(@PathVariable Roles givenRole, @RequestHeader String role) {
         try{
             return new ResponseEntity<>(userService.findAllByRole(givenRole), HttpStatus.OK);
         }
@@ -72,9 +72,9 @@ public class UserController {
      * @returns {ResponseEntity} UserEntity
      * @memberof UserController
      */
-    @GetMapping("id/{id}")
+    @GetMapping("id/{GivenId}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity getUserById(@PathVariable UUID GivenId, @RequestHeader String role ){
+    public ResponseEntity<?> getUserById(@PathVariable UUID GivenId, @RequestHeader String role ){
         try{
             return new ResponseEntity<>(userService.findById(GivenId).get(), HttpStatus.OK);
         }
@@ -92,7 +92,7 @@ public class UserController {
      */
     @GetMapping("/email/{email}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity getUserByEmail(@PathVariable String email, @RequestHeader String role ) {
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email, @RequestHeader String role ) {
         try{
             Optional<UserEntity> user = userService.findByEmail(email);
             if(user.isPresent()){
@@ -114,7 +114,7 @@ public class UserController {
      */
     @GetMapping("/username/{username}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity getUserByUsername(@PathVariable String username, @RequestHeader String role ) {
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username, @RequestHeader String role ) {
         try{
             Optional<UserEntity> user = userService.findByUsername(username);
             if(user.isPresent()){
@@ -136,7 +136,7 @@ public class UserController {
      */
     @PutMapping("/update")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity updateUser(@RequestBody UserInfoDto userInfoDto, @RequestHeader String role, @RequestHeader String id) {
+    public ResponseEntity<?> updateUser(@RequestBody UserInfoDto userInfoDto, @RequestHeader String role, @RequestHeader String id) {
         UserEntity body = new UserEntity(userInfoDto);
         try {
             // If the ORM finds user with existing id, it just changes the different columns
@@ -163,7 +163,7 @@ public class UserController {
      */
     @DeleteMapping ("/delete/{id}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity deleteUserByUserId(@PathVariable UUID id, @RequestHeader String role) {
+    public ResponseEntity<?> deleteUserByUserId(@PathVariable UUID id, @RequestHeader String role) {
         try{
             this.userService.deleteById(id);
             return new ResponseEntity<>("User Successfully Deleted", HttpStatus.OK);
@@ -183,7 +183,7 @@ public class UserController {
     //TODO not sure if it is smart to have a function wiping the user database
     @DeleteMapping("/wipeUsersDatabase")
     @PreAuthorize("#role == 'ADMIN'")
-    public ResponseEntity deleteAllUsers(@RequestBody UUID userId, @RequestHeader String role) {
+    public ResponseEntity<?> deleteAllUsers(@RequestBody UUID userId, @RequestHeader String role) {
         try{
             if(this.userService.findById(userId).get().role == Roles.ADMIN){
                 this.userService.deleteAll();
