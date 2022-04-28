@@ -72,11 +72,11 @@ public class UserController {
      * @returns {ResponseEntity} UserEntity
      * @memberof UserController
      */
-    @GetMapping("id/{GivenId}")
+    @GetMapping("id/{givenId}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity<?> getUserById(@PathVariable UUID GivenId, @RequestHeader String role ){
+    public ResponseEntity<?> getUserById(@PathVariable UUID givenId, @RequestHeader String role ){
         try{
-            return new ResponseEntity<>(userService.findById(GivenId).get(), HttpStatus.OK);
+            return new ResponseEntity<>(userService.findById(givenId).get(), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
