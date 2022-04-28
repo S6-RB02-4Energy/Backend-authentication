@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -39,13 +41,15 @@ public class UserController {
      */
     @GetMapping("/all")
     @PreAuthorize("#role == 'ADMIN'")
-    public ResponseEntity<?> getAllUsers(@RequestHeader String role) {
+    public ResponseEntity<List<UserEntity>> getAllUsers(@RequestHeader String role) {
         try{
             return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while fetching the data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError()
+                .header("Error", "A problem occurred, while fetching the data")
+                .body(Collections.emptyList());
         }
     }
     /**
