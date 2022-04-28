@@ -1,6 +1,7 @@
 package com.Energy.BasicSpringAPI.controller;
 
 
+import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.enumerators.Roles;
 import com.Energy.BasicSpringAPI.service.AuthenticationFilter;
@@ -135,7 +136,8 @@ public class UserController {
      */
     @PutMapping("/update")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity updateUser(@RequestBody UserEntity body, @RequestHeader String role, @RequestHeader String id) {
+    public ResponseEntity updateUser(@RequestBody UserInfoDto userInfoDto, @RequestHeader String role, @RequestHeader String id) {
+        UserEntity body = new UserEntity(userInfoDto);
         try {
             // If the ORM finds user with existing id, it just changes the different columns
             if (id.equals(body.getId().toString())) {
