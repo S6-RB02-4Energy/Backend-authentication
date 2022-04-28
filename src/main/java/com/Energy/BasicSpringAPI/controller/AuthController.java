@@ -65,7 +65,6 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register")
-    // TODO @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')")
     public ResponseEntity CreateUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
         UserEntity user = new UserEntity(userInfoDto);
         if (userService.existsByUsername(user.getUsername())) {

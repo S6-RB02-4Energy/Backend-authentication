@@ -59,16 +59,6 @@ public class AuthControllerTests {
 //                        .content(requestJson)).andDo(print()).andExpect(status().isOk())
 //                .andExpect(content().string("fakeToken"));
 //    }
-
-    @Test
-    public void verifyTokenTest() throws Exception {
-       String token = "fakeToken";
-       when(authenticationFilter.validateToken("fakeToken")).thenReturn(true);
-        this.mockMvc.perform(post("/auth/verifyToken").contentType(MediaType.APPLICATION_JSON)
-                        .content(token)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string("The token is valid"));
-    }
-
     @Test
     public void registerTest() throws Exception {
         UserEntity user1 = new UserEntity();
