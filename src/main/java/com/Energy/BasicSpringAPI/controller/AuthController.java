@@ -38,7 +38,7 @@ public class AuthController {
 
     @PermitAll
     @PostMapping(value = "/login")
-    public ResponseEntity<?> authenticate(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<String> authenticate(@RequestBody LoginDto loginDto) {
         Optional<UserEntity> user = authService.getUser(loginDto.getEmail(), loginDto.getPassword());
         if (user.isEmpty()) {
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
@@ -48,12 +48,13 @@ public class AuthController {
         if (authenticationFilter.validateToken(token)) {
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
-        return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
-    }
+        return ResponseEntity.status(401)
+            .header("Error", "Wrong Credentials")
+            .body(null);    }
 
     @PostMapping(value = "/verifyToken")
 //    @PreAuthorize("#role == 'CONSUMER'")
-    public ResponseEntity<?> verifyToken(@RequestBody String body, @RequestHeader String role) {
+    public ResponseEntity<String> verifyToken(@RequestBody String body, @RequestHeader String role) {
         final StringTokenizer tokenizer = new StringTokenizer(body, ":");
         final String token = tokenizer.nextToken();
 
@@ -64,24 +65,24 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<?> createUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
+    public ResponseEntity<UserInfoDto> createUser(@RequestBody UserInfoDto userInfoDto) throws NoSuchAlgorithmException {
         UserEntity user = new UserEntity(userInfoDto);
         if (userService.existsByUsername(user.getUsername())) {
-            return ResponseEntity
-                .badRequest()
-                .body("Error: Username is already taken!");
+            return ResponseEntity.badRequest()
+                .header("Error", "username already exists")
+                .body(null);
         }
 
         if (userService.existsByEmail(user.getEmail())) {
-            return ResponseEntity
-                .badRequest()
-                .body("Error: Email is already in use!");
+            return ResponseEntity.badRequest()
+                .header("Error", "email already exists")
+                .body(null);
         }
 
         if (user.role == null) {
-            return ResponseEntity
-                .badRequest()
-                .body("Error: Role is not valid!");
+            return ResponseEntity.badRequest()
+                .header("Error", "role not valid")
+                .body(null);
         }
 
         user.confirmationCode = this.userService.getRandomConfirmationCode();

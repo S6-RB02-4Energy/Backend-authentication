@@ -31,7 +31,7 @@ public class UserController {
     private UserService userService;
 
     static final Logger logger = Logger.getLogger("com.Energy.AuthenticationAPI.UserController");
-
+    static final String ERROR_MESSAGE = "A problem occurred, while fetching the data";
 
     /**
      * Getting all users
@@ -48,7 +48,7 @@ public class UserController {
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", "A problem occurred, while fetching the data")
+                .header("Error", ERROR_MESSAGE)
                 .body(Collections.emptyList());
         }
     }
@@ -60,14 +60,15 @@ public class UserController {
      */
     @GetMapping("/all/{givenRole}")
     @PreAuthorize("#role == 'ADMIN'")
-    public ResponseEntity<?> getAllUsersByRole(@PathVariable Roles givenRole, @RequestHeader String role) {
+    public ResponseEntity<List<UserEntity>> getAllUsersByRole(@PathVariable Roles givenRole, @RequestHeader String role) {
         try{
             return new ResponseEntity<>(userService.findAllByRole(givenRole), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while fetching the data", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return ResponseEntity.internalServerError()
+                .header("Error", ERROR_MESSAGE)
+                .body(Collections.emptyList());        }
     }
 
     /**
@@ -78,13 +79,15 @@ public class UserController {
      */
     @GetMapping("id/{givenId}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity<?> getUserById(@PathVariable UUID givenId, @RequestHeader String role ){
+    public ResponseEntity<UserEntity> getUserById(@PathVariable UUID givenId, @RequestHeader String role ){
         try{
             return new ResponseEntity<>(userService.findById(givenId).get(), HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while fetching the data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError()
+                .header("Error", ERROR_MESSAGE)
+                .body(null);
         }
     }
 
@@ -96,18 +99,21 @@ public class UserController {
      */
     @GetMapping("/email/{email}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity<?> getUserByEmail(@PathVariable String email, @RequestHeader String role ) {
+    public ResponseEntity<UserEntity> getUserByEmail(@PathVariable String email, @RequestHeader String role ) {
         try{
             Optional<UserEntity> user = userService.findByEmail(email);
             if(user.isPresent()){
                 return new ResponseEntity<>(user.get(), HttpStatus.OK);
             }
-            return new ResponseEntity<>("There is no user with that email", HttpStatus.NOT_FOUND);
+            return ResponseEntity.internalServerError()
+                .header("Error", "No user with that email")
+                .body(null);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while fetching the data", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return ResponseEntity.internalServerError()
+                .header("Error", ERROR_MESSAGE)
+                .body(null);        }
     }
 
     /**
@@ -118,17 +124,21 @@ public class UserController {
      */
     @GetMapping("/username/{username}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity<?> getUserByUsername(@PathVariable String username, @RequestHeader String role ) {
+    public ResponseEntity<UserEntity> getUserByUsername(@PathVariable String username, @RequestHeader String role ) {
         try{
             Optional<UserEntity> user = userService.findByUsername(username);
             if(user.isPresent()){
                 return new ResponseEntity<>(user.get(), HttpStatus.OK);
             }
-            return new ResponseEntity<>("There is no user with that username", HttpStatus.NOT_FOUND);
+            return ResponseEntity.internalServerError()
+                .header("Error", "No user with that username")
+                .body(null);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while fetching the data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError()
+                .header("Error", ERROR_MESSAGE)
+                .body(null);
         }
     }
 
@@ -140,7 +150,7 @@ public class UserController {
      */
     @PutMapping("/update")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity<?> updateUser(@RequestBody UserInfoDto userInfoDto, @RequestHeader String role, @RequestHeader String id) {
+    public ResponseEntity<UserEntity> updateUser(@RequestBody UserInfoDto userInfoDto, @RequestHeader String role, @RequestHeader String id) {
         UserEntity body = new UserEntity(userInfoDto);
         try {
             // If the ORM finds user with existing id, it just changes the different columns
@@ -151,12 +161,14 @@ public class UserController {
                 updated.password = (body.password == null) ? updated.password : AuthenticationFilter.getBcryptHash(body.password);
                 return new ResponseEntity<>(userService.save(updated), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Internal service error", HttpStatus.BAD_REQUEST);
-            }
+                return ResponseEntity.badRequest()
+                    .header("Error", ERROR_MESSAGE)
+                    .body(null);            }
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while updating the user", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return ResponseEntity.internalServerError()
+                .header("Error", ERROR_MESSAGE)
+                .body(null);        }
     }
 
     /**
@@ -167,14 +179,16 @@ public class UserController {
      */
     @DeleteMapping ("/delete/{id}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity<?> deleteUserByUserId(@PathVariable UUID id, @RequestHeader String role) {
+    public ResponseEntity<String> deleteUserByUserId(@PathVariable UUID id, @RequestHeader String role) {
         try{
             this.userService.deleteById(id);
             return new ResponseEntity<>("User Successfully Deleted", HttpStatus.OK);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while deleting user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError()
+                .header("Error", ERROR_MESSAGE)
+                .body(null);
         }
     }
 
@@ -187,7 +201,7 @@ public class UserController {
     //TODO not sure if it is smart to have a function wiping the user database
     @DeleteMapping("/wipeUsersDatabase")
     @PreAuthorize("#role == 'ADMIN'")
-    public ResponseEntity<?> deleteAllUsers(@RequestBody UUID userId, @RequestHeader String role) {
+    public ResponseEntity<String> deleteAllUsers(@RequestBody UUID userId, @RequestHeader String role) {
         try{
             if(this.userService.findById(userId).get().role == Roles.ADMIN){
                 this.userService.deleteAll();
@@ -198,7 +212,8 @@ public class UserController {
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
-            return new ResponseEntity<>("A problem occurred, while fetching the data", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return ResponseEntity.internalServerError()
+                .header("Error", ERROR_MESSAGE)
+                .body(null);        }
     }
 }
