@@ -36,6 +36,8 @@ public class AuthController {
     @Autowired
     private MailService mailService;
 
+    static final String ERROR_NAME = "Error";
+
     @PermitAll
     @PostMapping(value = "/login")
     public ResponseEntity<String> authenticate(@RequestBody LoginDto loginDto) {
@@ -49,7 +51,7 @@ public class AuthController {
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
         return ResponseEntity.status(401)
-            .header("Error", "Wrong Credentials")
+            .header(ERROR_NAME, "Wrong Credentials")
             .body(null);    }
 
     @PostMapping(value = "/verifyToken")
@@ -69,19 +71,19 @@ public class AuthController {
         UserEntity user = new UserEntity(userInfoDto);
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity.badRequest()
-                .header("Error", "username already exists")
+                .header(ERROR_NAME, "username already exists")
                 .body(null);
         }
 
         if (userService.existsByEmail(user.getEmail())) {
             return ResponseEntity.badRequest()
-                .header("Error", "email already exists")
+                .header(ERROR_NAME, "email already exists")
                 .body(null);
         }
 
         if (user.role == null) {
             return ResponseEntity.badRequest()
-                .header("Error", "role not valid")
+                .header(ERROR_NAME, "role not valid")
                 .body(null);
         }
 

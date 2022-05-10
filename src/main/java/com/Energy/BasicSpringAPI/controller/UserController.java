@@ -32,6 +32,8 @@ public class UserController {
 
     static final Logger logger = Logger.getLogger("com.Energy.AuthenticationAPI.UserController");
     static final String ERROR_MESSAGE = "A problem occurred, while fetching the data";
+    static final String ERROR_NAME = "Error";
+
 
     /**
      * Getting all users
@@ -48,7 +50,7 @@ public class UserController {
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(Collections.emptyList());
         }
     }
@@ -67,7 +69,7 @@ public class UserController {
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(Collections.emptyList());        }
     }
 
@@ -86,7 +88,7 @@ public class UserController {
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(null);
         }
     }
@@ -106,13 +108,13 @@ public class UserController {
                 return new ResponseEntity<>(user.get(), HttpStatus.OK);
             }
             return ResponseEntity.internalServerError()
-                .header("Error", "No user with that email")
+                .header(ERROR_NAME, "No user with that email")
                 .body(null);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(null);        }
     }
 
@@ -131,13 +133,13 @@ public class UserController {
                 return new ResponseEntity<>(user.get(), HttpStatus.OK);
             }
             return ResponseEntity.internalServerError()
-                .header("Error", "No user with that username")
+                .header(ERROR_NAME, "No user with that username")
                 .body(null);
         }
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(null);
         }
     }
@@ -162,12 +164,12 @@ public class UserController {
                 return new ResponseEntity<>(userService.save(updated), HttpStatus.OK);
             } else {
                 return ResponseEntity.badRequest()
-                    .header("Error", ERROR_MESSAGE)
+                    .header(ERROR_NAME, ERROR_MESSAGE)
                     .body(null);            }
         } catch (Exception e) {
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(null);        }
     }
 
@@ -187,7 +189,7 @@ public class UserController {
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(null);
         }
     }
@@ -213,7 +215,7 @@ public class UserController {
         catch (Exception e){
             logger.log(Level.SEVERE, e.getMessage());
             return ResponseEntity.internalServerError()
-                .header("Error", ERROR_MESSAGE)
+                .header(ERROR_NAME, ERROR_MESSAGE)
                 .body(null);        }
     }
 }
