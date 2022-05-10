@@ -153,14 +153,14 @@ public class UserController {
     @PutMapping("/update")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
     public ResponseEntity<UserEntity> updateUser(@RequestBody UserInfoDto userInfoDto, @RequestHeader String role, @RequestHeader String id) {
-        UserEntity body = new UserEntity(userInfoDto);
         try {
             // If the ORM finds user with existing id, it just changes the different columns
-            if (id.equals(body.getId().toString())) {
-                UserEntity updated = userService.getUserById(body.getId());
-                updated.email = (body.email == null) ? updated.email : body.email;
-                updated.username = (body.username == null) ? updated.username : body.username;
-                updated.password = (body.password == null) ? updated.password : AuthenticationFilter.getBcryptHash(body.password);
+            System.out.println(id + ' ' + userInfoDto.getId());
+            if (id.equals(userInfoDto.getId().toString())) {
+                UserEntity updated = userService.getUserById(userInfoDto.getId());
+                updated.email = (userInfoDto.getEmail() == null) ? updated.email : userInfoDto.getEmail();
+                updated.username = (userInfoDto.getUsername() == null) ? updated.username : userInfoDto.getUsername();
+                updated.password = (userInfoDto.getPassword() == null) ? updated.password : AuthenticationFilter.getBcryptHash(userInfoDto.getPassword());
                 return new ResponseEntity<>(userService.save(updated), HttpStatus.OK);
             } else {
                 return ResponseEntity.badRequest()
