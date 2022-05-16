@@ -28,8 +28,8 @@ spec:
                 - image: mysql:latest
                   name: mysql
                   env:
-                      - name: MYSQL_DATABASE
-                        value: authdb
+#                      - name: MYSQL_DATABASE
+#                        value: authdb
                       - name: MYSQL_USER
                         valueFrom:
                             secretKeyRef:
@@ -49,10 +49,10 @@ spec:
                       - containerPort: 3306
                         name: mysql
                   volumeMounts:
-                      - name: mysql-initdb
-                        mountPath: /docker-entrypoint-initdb.d
                       - name: mysql-persistent-storage
                         mountPath: /var/lib/mysql
+                      - name: mysql-initdb
+                        mountPath: /docker-entrypoint-initdb.d
 
             volumes:
                 - name: mysql-persistent-storage

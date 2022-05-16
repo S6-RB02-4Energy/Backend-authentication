@@ -4,7 +4,7 @@ COPY src /home/app/src
 COPY pom.xml /home/app
 
 # Whenever in GCloud due to security purposes
-# COPY .env /home/app
+COPY .env /home/app
 
 # Building the Service
 RUN mvn -f /home/app/pom.xml clean package

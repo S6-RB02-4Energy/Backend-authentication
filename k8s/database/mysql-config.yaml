@@ -3,7 +3,8 @@ kind: ConfigMap
 metadata:
     name: mysql-configmap
 data:
-    init.sql: |-
+    initdb.sql: |-
         CREATE DATABASE IF NOT EXISTS `authdb`;
         CREATE DATABASE IF NOT EXISTS `users`;
+        CREATE DATABASE IF NOT EXISTS `random`;
     database_url: jdbc:mysql://mysql-service/authdb

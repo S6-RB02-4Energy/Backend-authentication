@@ -31,20 +31,12 @@ spec:
 #                                  key: mysql-user-username
 #                                  name: mysql-secret
                       -   name: SPRING_DATASOURCE_PASSWORD
-                          value: root
-#                          valueFrom:
-#                              secretKeyRef:
-#                                  key: mysql-user-password
-#                                  name: mysql-secret
-#                  env:
-#                      - name: DB_HOST   # Setting Database host address
-#                        value: mysql-service
-#                      - name: DB_NAME  # Setting Database name
-#                        value: authdb
-#                      - name: DB_USERNAME  # Setting Database username
-#                        value: root
-#                      - name: DB_PASSWORD # Setting Database password
-#                        value: root
+#                          value: root
+                          valueFrom:
+                              secretKeyRef:
+                                  key: mysql-user-password
+                                  name: mysql-secret
+
 # This seperator --- below is MANDATORY!!!
 ---
 # Define a 'Service' To Expose the application
