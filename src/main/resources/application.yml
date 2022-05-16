@@ -2,15 +2,14 @@ server:
     port: 8083
 spring:
     datasource:
-        url: jdbc:h2:mem:virtual
-        username: sa
-        password: password
-        driverClassName: org.h2.Driver
-    jpa:
-        spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-        generate-ddl: true
-        hibernate:
-            ddl-auto: update
+        url: "jdbc:mysql://localhost:3307/test"
+        username: "root"
+        password: "root"
+#    jpa:
+#        spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+#        generate-ddl: true
+#        hibernate:
+#            ddl-auto: update
 eureka:
   client:
     serviceUrl:
