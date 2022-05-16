@@ -20,7 +20,7 @@ import java.util.UUID;
  * @class UserService
  */
 @Service
-public class UserService implements UserInterface{
+public class UserService implements UserInterface {
     @Autowired
     private UserRepository userRepository;
 
@@ -35,8 +35,8 @@ public class UserService implements UserInterface{
     }
 
     @Override
-    public UserEntity save(UserEntity userEntity){
-    return userRepository.save(userEntity);
+    public UserEntity save(UserEntity userEntity) {
+        return userRepository.save(userEntity);
 
     }
 
@@ -77,9 +77,10 @@ public class UserService implements UserInterface{
 
     /**
      * Generates confirmationcode consisting out of 6 numbers
+     *
      * @return confirmationcode as String
      */
-    public String getRandomConfirmationCode(){
+    public String getRandomConfirmationCode() {
         // It will generate 6 digit random Number.
         // from 0 to 999999
         Random rnd = new Random();
@@ -91,61 +92,70 @@ public class UserService implements UserInterface{
 
     /**
      * Checks if the confirmationCode matches. If true updates the current logged-in user.
+     *
      * @param confirmationCode from frontend given by the logged-in user
-     * @param userId of current logged-in user
+     * @param userId           of current logged-in user
      * @return boolean
      */
     @Async
-    public Boolean checkEmailConfirmationCode(String confirmationCode, String userId){
-        UserEntity currentUser =  this.userRepository.findById(UUID.fromString(userId)).get();
+    public Boolean checkEmailConfirmationCode(String confirmationCode, String userId) {
+        UserEntity currentUser = this.userRepository.findById(UUID.fromString(userId)).get();
 
-        if (currentUser.confirmationCode != null  && (currentUser.confirmationCode.equals(confirmationCode))){ //maybe check better with equals?
+        if (currentUser.confirmationCode != null && (currentUser.confirmationCode.equals(confirmationCode))) { //maybe check better with equals?
             currentUser.emailConfirmed = true;
             currentUser.confirmationCode = null;
             this.save(currentUser);
-            return  true;
+            return true;
         }
         return false;
     }
 
     /**
      * This method is used to get all user information for backend checks.
+     *
      * @param userId
      * @return UserEntity
      */
-    public UserEntity getUserById(UUID userId){
+    public UserEntity getUserById(UUID userId) {
         return this.userRepository.findById(userId).get();
     }
 
     /**
      * This method is used to get user information for the frontend.
+     *
      * @param userId
      * @return userInfoDto without password and confirmation-code.
      */
-    public UserInfoDto getUserInfo(UUID userId){
-        UserEntity user =  this.userRepository.findById(userId).get();
+    public UserInfoDto getUserInfo(UUID userId) {
+        UserEntity user = this.userRepository.findById(userId).get();
         return new UserInfoDto(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                user.getEmailConfirmed()
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getRole(),
+            user.getEmailConfirmed(),
+            user.getConfirmationCode(),
+            user.getAddress()
+
         );
     }
 
     /**
      * Saves user and returns user information for frontend.
+     *
      * @param user
      * @return UserInfoDto without password and confirmation-code.
      */
-    public UserInfoDto saveUser(UserEntity user){
-        UserEntity createdUser =  this.userRepository.save(user);
+    public UserInfoDto saveUser(UserEntity user) {
+        UserEntity createdUser = this.userRepository.save(user);
         return new UserInfoDto(
-                createdUser.getId(),
-                createdUser.getUsername(),
-                createdUser.getEmail(),
-                createdUser.getRole(),
-                createdUser.getEmailConfirmed()
+            createdUser.getId(),
+            createdUser.getUsername(),
+            createdUser.getEmail(),
+            createdUser.getRole(),
+            createdUser.getEmailConfirmed(),
+            createdUser.getConfirmationCode(),
+            createdUser.getAddress()
         );
     }
 

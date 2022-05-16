@@ -1,6 +1,6 @@
 package com.Energy.BasicSpringAPI.controller;
 
-import com.Energy.BasicSpringAPI.DTO.UserDto;
+import com.Energy.BasicSpringAPI.DTO.UserInfoDto;
 import com.Energy.BasicSpringAPI.entity.UserEntity;
 import com.Energy.BasicSpringAPI.service.MailService;
 import com.Energy.BasicSpringAPI.service.UserService;
@@ -9,12 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 /**
@@ -41,16 +35,16 @@ public class MailController {
      */
     @PermitAll //TODO: user should be validated (with annotation for JWT-token).
     @PostMapping(value = "/confirmEmail/{userId}/{confirmationCode}")
-    public ResponseEntity confirmEmail(@PathVariable(value="userId") String userId,
-                                       @PathVariable(value="confirmationCode") String confirmationCode) {
+    public ResponseEntity<UserInfoDto> confirmEmail(@PathVariable(value="userId") String userId,
+                                                    @PathVariable(value="confirmationCode") String confirmationCode) {
 
         if (this.userService.checkEmailConfirmationCode(confirmationCode, userId)) {
             return new ResponseEntity<>(userService.getUserInfo(UUID.fromString(userId)), HttpStatus.OK);
         };
 
-        return ResponseEntity
-                .badRequest()
-                .body("Confirmation failed");
+        return ResponseEntity.badRequest()
+            .header("Error", "Confirmation failed")
+            .body(null);
     }
 
 
@@ -62,7 +56,7 @@ public class MailController {
      */
     @PermitAll
     @PostMapping(value = "/resendConfirmationCode/{userId}")
-    public ResponseEntity resendConfirmationCode(@PathVariable(value = "userId") String userId
+    public ResponseEntity<UserInfoDto> resendConfirmationCode(@PathVariable(value = "userId") String userId
                                                  /*@Currentuser user (EXAMPLE)*/){
 
         UserEntity currentUser = userService.getUserById(UUID.fromString(userId));

@@ -47,7 +47,7 @@ public class AuthControllerTests {
         user1.email = "user@example.com";
         user1.password = AuthenticationFilter.getBcryptHash("qawsedrf");
         when(authService.getUser(user1.email, user1.password)).thenReturn(Optional.of(user1));
-        when(authenticationFilter.createJWT(user1.getId().toString(), user1.email,user1.username, -1)).thenReturn("fakeToken");
+        when(authenticationFilter.createJWT(Optional.of(user1))).thenReturn("fakeToken");
         when(authenticationFilter.validateToken("fakeToken")).thenReturn(true);
         String requestJson = "{\n" +
                 "        \"email\":\"" +
@@ -59,16 +59,6 @@ public class AuthControllerTests {
                         .content(requestJson)).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string("fakeToken"));
     }
-
-    @Test
-    public void verifyTokenTest() throws Exception {
-       String token = "fakeToken";
-       when(authenticationFilter.validateToken("fakeToken")).thenReturn(true);
-        this.mockMvc.perform(post("/auth/verifyToken").contentType(MediaType.APPLICATION_JSON)
-                        .content(token)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().string("The token is valid"));
-    }
-
     @Test
     public void registerTest() throws Exception {
         UserEntity user1 = new UserEntity();
@@ -78,7 +68,7 @@ public class AuthControllerTests {
         user1.role = Roles.CONSUMER;
         when(userService.existsByUsername(user1.username)).thenReturn(false);
         when(userService.existsByEmail(user1.email)).thenReturn(false);
-        UserInfoDto userInfoDto = new UserInfoDto(user1.getId(), user1.username, user1.email, user1.role, user1.emailConfirmed);
+        UserInfoDto userInfoDto = new UserInfoDto(user1.getId(), user1.username, user1.email, user1.role, user1.emailConfirmed,user1.getConfirmationCode(), user1.getAddress());
         when(userService.saveUser(user1)).thenReturn(userInfoDto);
         String requestJson = "{\n" +
                 "        \"email\":\"" + user1.email + "\"," + "\n" +
