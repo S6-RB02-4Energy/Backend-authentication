@@ -5,9 +5,9 @@ name: Maven CI
 
 on:
   push:
-    branches: [ main, Authentication ]
+    branches: [ main, development ]
   pull_request:
-    branches: [ main, Authentication ]
+    branches: [ main, development ]
 
 jobs:
   build:
