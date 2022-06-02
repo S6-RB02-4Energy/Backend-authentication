@@ -45,7 +45,6 @@ public class AuthController {
         if (user.isEmpty()) {
             return new ResponseEntity<>("The email or password is wrong", HttpStatus.UNAUTHORIZED);
         }
-        String userId = String.valueOf(user.get().getId());
         String token = authenticationFilter.createJWT(user);
         if (authenticationFilter.validateToken(token)) {
             return new ResponseEntity<>(token, HttpStatus.OK);
@@ -93,7 +92,7 @@ public class AuthController {
 
         try {
             this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
-            return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
+                return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
