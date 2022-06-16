@@ -28,15 +28,16 @@ spec:
                           memory: 500M
                           cpu: "500m"
                   volumeMounts:
-                      - mountPath: /var/lib/grafana
-                        name: grafana-storage
                       - mountPath: /etc/grafana/provisioning/datasources
                         name: grafana-datasources
                         readOnly: false
+                      - name: grafana-pvc
+                        mountPath: /var/lib/grafana/
             volumes:
-                - name: grafana-storage
-                  emptyDir: {}
-                - name: grafana-datasources
+                - name: grafana-datasources #uses the config-map.yaml configuration
                   configMap:
                       defaultMode: 420
                       name: grafana-datasources
+                - name: grafana-pvc #uses the grafana-pvc.yaml claim for persistent storage
+                  persistentVolumeClaim:
+                    claimName: grafana-pvc

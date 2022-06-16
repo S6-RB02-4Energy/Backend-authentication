@@ -4,7 +4,7 @@ metadata:
     name: prometheus
 rules:
     - apiGroups: [""]
-      resources:
+      resources: #add extra resources here if needed.
           - nodes
           - nodes/proxy
           - services

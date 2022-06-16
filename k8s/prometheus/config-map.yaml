@@ -6,7 +6,7 @@ metadata:
         name: prometheus-server-conf
     namespace: monitoring
 data:
-    prometheus.rules: |-
+    prometheus.rules: |- #add rules here
         groups:
         - name: devopscube demo alert
           rules:
@@ -17,7 +17,7 @@ data:
               severity: slack
             annotations:
               summary: High Memory Usage
-    prometheus.yml: |-
+    prometheus.yml: |- #The scrape configuration and targets for Prometheus are set up here.
         global:
           scrape_interval: 5s
           evaluation_interval: 5s
