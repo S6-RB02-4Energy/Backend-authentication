@@ -181,9 +181,10 @@ public class UserController {
      */
     @DeleteMapping ("/delete/{id}")
     @PreAuthorize("#role == 'ADMIN' or #role =='CONSUMER' or #role =='LARGECONSUMER'or #role =='UTILITY'")
-    public ResponseEntity<String> deleteUserByUserId(@PathVariable UUID id, @RequestHeader String role) {
+    public ResponseEntity<String> deleteUserByUserId(@PathVariable String id, @RequestHeader String role) {
         try{
-            this.userService.deleteById(id);
+            UUID userId = UUID.fromString(id);
+            this.userService.deleteById(userId);
             return new ResponseEntity<>("User Successfully Deleted", HttpStatus.OK);
         }
         catch (Exception e){
