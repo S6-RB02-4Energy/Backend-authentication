@@ -1,5 +1,7 @@
 package com.Energy.BasicSpringAPI.service;
 
+import com.Energy.BasicSpringAPI.entity.UserEntity;
+import com.Energy.BasicSpringAPI.enumerators.Roles;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +16,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.time.ZonedDateTime;
+import java.util.*;
 
 @Component
 public class AuthenticationFilter {
@@ -36,7 +39,13 @@ public class AuthenticationFilter {
 
     private final String SECRET_KEY = dotenv.get("SECRET_KEY");
 
-    public String createJWT(String id, String issuer, String subject, long ttlMillis) {
+    public String createJWT(Optional<UserEntity> user) {
+
+        Map<String, Object> claims = new HashMap<>();
+        // to add the role in the claims
+        claims.put("role",user.get().getRole().toString());
+        claims.put("id",user.get().getId().toString());
+
 
         //The JWT signature algorithm we will be using to sign the token
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -49,11 +58,12 @@ public class AuthenticationFilter {
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         //Let's set the JWT Claims
-        JwtBuilder builder = Jwts.builder().setId(id)
+        JwtBuilder builder = Jwts.builder()
+            .setClaims(claims)
             .setIssuedAt(now)
-            .setSubject(subject)
-            .setIssuer(issuer)
-            .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(1).toInstant()))
+            .setSubject(user.get().getEmail())
+            .setIssuer(user.get().getUsername())
+            .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(6).toInstant()))
             .signWith(signatureAlgorithm, signingKey);
 
         //Builds the JWT and serializes it to a compact, URL-safe string

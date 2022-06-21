@@ -1,22 +1,32 @@
 server:
     port: 8083
-#spring:
+
+spring:
+    datasource:
+        url: jdbc:h2:mem:virtual
+        username: root
+        password: root
+        driverClassName: org.h2.Driver
+# enable this for kubernetes connection and comment out h2, also in pom      
 #    datasource:
-#        url: "jdbc:mysql://localhost:3307/test"
+#        url: "jdbc:mysql://localhost:3306/4energy"
 #        username: "root"
 #        password: "root"
-#    jpa:
-#        spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-#        generate-ddl: true
-#        hibernate:
-#            ddl-auto: update
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8083/eureka
+    jpa:
+        spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+        generate-ddl: true
+        hibernate:
+            ddl-auto: update
+    application:
+        name: AUTHENTICATIONAPI
+    h2:
+        console.enabled: true
+        console.path: /h2-console
+        console.settings.trace: false
+        spring.h2.console.settings.web-allow-others: false
 
-# Changed to h2 for the GitHub CI(Change back when working locally, if you want)
-#      datasource:
-#        url: "jdbc:mysql://localhost:3306/test"
-#        username: "root"
-#        password:
+
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:8761/eureka

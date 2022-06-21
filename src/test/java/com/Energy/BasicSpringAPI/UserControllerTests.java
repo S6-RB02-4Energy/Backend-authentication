@@ -41,7 +41,8 @@ public class UserControllerTests {
         mockList.add(user1);
         mockList.add(user2);
         when(service.findAll()).thenReturn(mockList);
-        this.mockMvc.perform(get("/user/all")).andDo(print()).andExpect(status().isOk())
+
+        this.mockMvc.perform(get("/user/all").header("role", "ADMIN")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json("" +
                         "[\n" +
                         "    {\n" +
@@ -65,7 +66,7 @@ public class UserControllerTests {
         user1.setRole(Roles.LARGECONSUMER);
         mockList.add(user1);
         when(service.findAllByRole(Roles.ADMIN)).thenReturn(mockList);
-        this.mockMvc.perform(get("/user/all/ADMIN")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/user/all/ADMIN").header("role", "ADMIN")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json("" +
                         "[\n" +
                         "    {\n" +
@@ -79,7 +80,7 @@ public class UserControllerTests {
     public void getUserByIdTest() throws Exception {
         UserEntity user1 = new UserEntity();
         when(service.findById(user1.getId())).thenReturn(Optional.of(user1));
-        this.mockMvc.perform(get("/user/id/"+user1.getId())).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/user/id/"+user1.getId()).header("role", "ADMIN")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(
                         "    {\n" +
                         "        \"id\":" +
@@ -92,7 +93,7 @@ public class UserControllerTests {
         UserEntity user1 = new UserEntity();
         user1.setUsername("user1");
         when(service.findByUsername("user1")).thenReturn(Optional.of(user1));
-        this.mockMvc.perform(get("/user/username/"+user1.getUsername())).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/user/username/"+user1.getUsername()).header("role", "ADMIN")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(
                         "    {\n" +
                                 "        \"id\":" +
@@ -107,7 +108,7 @@ public class UserControllerTests {
         UserEntity user1 = new UserEntity();
         user1.setEmail("user1@example.com");
         when(service.findByEmail("user1@example.com")).thenReturn(Optional.of(user1));
-        this.mockMvc.perform(get("/user/email/"+user1.getEmail())).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/user/email/"+user1.getEmail()).header("role", "ADMIN")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(
                         "    {\n" +
                                 "        \"id\":" +
@@ -123,6 +124,8 @@ public class UserControllerTests {
         user1.setEmail("user@example.com");
         UserEntity user1Updated = user1;
         user1Updated.setEmail("user1@example.com");
+        user1Updated.setId(UUID.fromString("955ccf9c-9ee0-4548-9737-c74b63ceb653"));
+        user1.setId(UUID.fromString("955ccf9c-9ee0-4548-9737-c74b63ceb653"));
 
         String requestJson = "{\n" +
                 "        \"id\":\"" +
@@ -134,13 +137,16 @@ public class UserControllerTests {
         when(service.getUserById(user1.getId())).thenReturn(user1);
         this.mockMvc.perform(
                 put("/user/update/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
+                    .header("role", "CONSUMER")
+                    .header("id" ,UUID.fromString("955ccf9c-9ee0-4548-9737-c74b63ceb653"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson))
+
                 .andExpect(status().isOk())
                 .andExpect(content().json(
                         "    {\n" +
                                 "        \"id\":" +
-                                user1.getId() +
+                                user1Updated.getId() +
                                 ",\n \"email\":" +
                                 "\"user1@example.com\"" +
                                 "    }\n"));
@@ -148,6 +154,6 @@ public class UserControllerTests {
     @Test
     public void deleteUserTest() throws Exception {
         UserEntity user1 = new UserEntity();
-        this.mockMvc.perform(delete("/user/delete/"+user1.getId())).andDo(print()).andExpect(status().isOk());
+        this.mockMvc.perform(delete("/user/delete/"+user1.getId()).header("role", "ADMIN")).andDo(print()).andExpect(status().isOk());
     }
 }
