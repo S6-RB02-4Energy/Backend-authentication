@@ -11,8 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
@@ -33,16 +31,12 @@ public class UserEntity {
 
     @Column(nullable = false, unique = true)
     @NonNull
-    @NotNull(message = "username cannot be null")
     public String username;
 
     @Column(nullable = false, unique = true)
-    @NotNull(message = "Email cannot be null")
-    @Email(message = "Email is not valid")
     public String email;
 
     @Column(nullable = false)
-    @NotNull(message = "Password cannot be null")
     public String password;
 
     @Column()
