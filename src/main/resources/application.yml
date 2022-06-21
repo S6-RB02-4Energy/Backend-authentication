@@ -1,11 +1,13 @@
 server:
     port: 8083
+
 spring:
     datasource:
         url: jdbc:h2:mem:virtual
         username: root
         password: root
         driverClassName: org.h2.Driver
+# enable this for kubernetes connection and comment out h2, also in pom      
 #    datasource:
 #        url: "jdbc:mysql://localhost:3306/4energy"
 #        username: "root"
@@ -22,6 +24,7 @@ spring:
         console.path: /h2-console
         console.settings.trace: false
         spring.h2.console.settings.web-allow-others: false
+
 
 eureka:
     client:

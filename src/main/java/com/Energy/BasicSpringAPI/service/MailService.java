@@ -1,6 +1,7 @@
 package com.Energy.BasicSpringAPI.service;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -9,9 +10,10 @@ import javax.mail.internet.MimeMessage;
 import java.util.Objects;
 import java.util.Properties;
 
-@Service
+@Component
 public class MailService {
-    Dotenv dotenv = Dotenv.load();
+    Dotenv dotenv = Dotenv.configure().directory("./").ignoreIfMalformed().ignoreIfMissing().load();
+
     public void sendEmailConfirmation(String email, String userName, String confirmationCode){
         final String userMailAddress = dotenv.get("EMAIL_ADDRESS");
         final String password = dotenv.get("EMAIL_PW");

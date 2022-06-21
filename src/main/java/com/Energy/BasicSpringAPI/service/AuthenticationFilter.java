@@ -20,7 +20,7 @@ import java.util.*;
 
 @Component
 public class AuthenticationFilter {
-    Dotenv dotenv = Dotenv.load();
+    Dotenv dotenv = Dotenv.configure().directory("./").ignoreIfMalformed().ignoreIfMissing().load();
 
     public static String getBcryptHash(String password) throws NoSuchAlgorithmException {
         PasswordEncoder passwordEncoder = getPasswordEncoder();
