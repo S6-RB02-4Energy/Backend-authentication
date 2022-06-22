@@ -91,7 +91,7 @@ public class AuthController {
         user.password = AuthenticationFilter.getBcryptHash(user.password);
 
         try {
-            this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
+//            this.mailService.sendEmailConfirmation(user.email, user.username, user.confirmationCode);
                 return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
