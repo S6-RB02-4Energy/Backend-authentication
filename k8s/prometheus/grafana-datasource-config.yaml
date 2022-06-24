@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: grafana-datasources
+    namespace: monitoring
+data: #If more data resources are used, you can add them here under data such as InfluxDB or Graphite.
+      #Make sure you first have the datasource connected in your cluster.
+    prometheus.yaml: |- #Is written in JSON-format, but can also be written in plain yaml.
+        {
+            "apiVersion": 1,
+            "datasources": [
+                {
+                   "access":"proxy",
+                    "editable": true,
+                    "name": "prometheus",
+                    "orgId": 1,
+                    "type": "prometheus",
+                    "url": "http://prometheus-service.monitoring.svc:8080",
+                    "version": 1
+                }
+            ]
+        }
